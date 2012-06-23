@@ -1,8 +1,7 @@
 (ns noir.response
   "Simple response helpers to change the content type, redirect, or return a canned response"
   (:refer-clojure :exclude [empty])
-  (:require [cheshire.core :as json]
-            [noir.options :as options]))
+  (:require [cheshire.core :as json]))
 
 (defn- ->map [c]
   (if-not (map? c)
@@ -70,7 +69,7 @@
              :proxy 305
              :temporary 307
              302)
-   :headers {"Location" (options/resolve-url url)}
+   :headers {"Location" url}
    :body ""})
 
 (defn empty
