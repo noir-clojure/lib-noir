@@ -3,3 +3,5 @@ pom.xml
 /lib/
 /classes/
 .lein-deps-sum
+target/
+.lein-failures
