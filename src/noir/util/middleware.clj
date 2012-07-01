@@ -2,7 +2,10 @@
   (:use [noir.response :only [redirect]])
   (:require [clojure.string :as s]))
 
-(defn wrap-canonical-host [app canonical]
+(defn wrap-canonical-host
+  "If the request is not targeting host canonical, redirect the
+   request to that host."
+  [app canonical]
   (fn [req]
     (let [headers (:headers req)]
       (when canonical
