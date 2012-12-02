@@ -78,9 +78,9 @@
   {:status 200
    :body ""})
 
-(defn clojure
-  "Wraps the response in the `application/clojure` content-type
+(defn edn
+  "Wraps the response in the `application/edn` content-type
    and calls pr-str on the Clojure data stuctures passed in."
   [data]
-  (content-type "application/clojure; charset=utf-8"
+  (content-type "application/edn; charset=utf-8"
                 (pr-str data)))
