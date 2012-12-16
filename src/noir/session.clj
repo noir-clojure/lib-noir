@@ -69,10 +69,12 @@
 
 (defn wrap-noir-session
   "A stateful layer around wrap-session. Options are passed to wrap-session."
-  [handler & [opts]]
-  (-> handler
-    (noir-session)
-    (wrap-session opts)))
+  ([handler]
+    (wrap-noir-session handler {}))
+  ([handler opts]
+    (-> handler
+      (noir-session)
+      (wrap-session opts))))
 
 (defn wrap-noir-session*
   "A stateful layer around wrap-session. Expects that wrap-session has already
