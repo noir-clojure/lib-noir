@@ -10,3 +10,11 @@ and such.
 These libraries will be maintained separate from Noir, and if you already use the Noir web framework, you
 already have this library. Nothing in here is specific to Noir and the purpose of it is to be used from
 any ring-based web framework, such as mustache and compojure.
+
+## Usage
+
+You want to use leiningen, of course. Add this to your `:dependencies`
+
+```clojure
+[lib-noir "0.2.0"]
+```
