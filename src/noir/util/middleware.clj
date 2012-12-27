@@ -1,5 +1,6 @@
 (ns noir.util.middleware
-  (:use [noir.response :only [redirect *request*]]
+  (:use [noir.request :only [*request*]] 
+        [noir.response :only [redirect]]        
         [compojure.core :only [routes]]
         [compojure.handler :only [site]]
         [hiccup.middleware :only [wrap-base-url]]

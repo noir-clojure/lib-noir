@@ -21,18 +21,17 @@
 
 (defn get-resource
   "returns a URL for a resource relative to the public folder of the application
-   expects path path elements to be passed in as strings, eg:
-   (get-resource \"css\" \"screen.css\" )"
-  [& relative-path]
-  (->> relative-path
-    (interpose File/separator)
-    (apply str)
-    (str "public" File/separator)
-    (io/resource)))
+   expects path to be a / separated string relative to the public folder, eg:
+   (get-resource \"/css/screen.css\" )"
+  [relative-path]
+  (if relative-path
+    (->> (.replaceAll relative-path "/" File/separator)
+         (str "public")
+         (io/resource))))
 
 (defn slurp-resource
   "Opens a reader on f and reads all its contents, returning a string. 
    Path is specified the same way as for get-resource"
-  [& path]
-  (if-let [resource (apply get-resource path)] 
-    (->> resource (io/input-stream) (slurp))))
+  [path]
+  (if-let [resource (get-resource path)] 
+    (-> resource io/input-stream slurp)))
