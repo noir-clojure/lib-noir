@@ -1,5 +1,6 @@
 (ns noir.response
   "Simple response helpers to change the content type, redirect, or return a canned response"
+  (:use [noir.request :only [*request*]])
   (:refer-clojure :exclude [empty])
   (:require [cheshire.custom :as json]))
 
@@ -59,18 +60,26 @@
    :temporary    -- A 307 temporary redirect.
 
    To see what these redirects are for in detail, visit
-   http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3"
-  [url & [type]]
-  {:status (case type
-             :permanent 301
-             :found 302
-             :see-other 303
-             :not-modified 304
-             :proxy 305
-             :temporary 307
-             302)
-   :headers {"Location" url}
-   :body ""})
+   http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3
+
+   finally, request can be passed in as the third argument, useful
+   if request is bound to a var"
+  ([url] (redirect url :permanent *request*))
+  ([url type] (redirect url type *request*))
+  ([url type request] 
+    (let [context (:context request)
+          url     (if (and context (not (.contains url "://")))
+                    (str context url) url)] 
+      {:status (case type
+                 :permanent 301
+                 :found 302
+                 :see-other 303
+                 :not-modified 304
+                 :proxy 305
+                 :temporary 307
+                 302)
+       :headers {"Location" url}
+       :body ""})))
 
 (defn empty
   "Return a successful, but completely empty response"
