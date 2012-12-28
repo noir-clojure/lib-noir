@@ -1,5 +1,5 @@
 (ns noir.util.route
-  (:use [noir.request :only [*request*]] 
+  (:use [noir.request :only [*request*]]
         [noir.response :only [redirect]]))
 
 (defmacro restricted

@@ -1,4 +1,4 @@
-(ns noir.response  
+(ns noir.response
   "Simple response helpers to change the content type, redirect, or return a canned response"
   (:use [noir.request :only [*request*]])
   (:refer-clojure :exclude [empty])
@@ -45,11 +45,6 @@
   "Wraps the content in the given status code"
   [code content]
   (assoc (->map content) :status code))
-
-(defn redirect
-  
-  [url & [type]]
-  )
 
 (defn redirect
   "A header redirect to a different URI. If given one argument,
