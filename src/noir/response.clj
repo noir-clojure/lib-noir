@@ -64,7 +64,7 @@
 
    finally, request can be passed in as the third argument, useful
    if request is bound to a var"
-  ([url] (redirect url :permanent *request*))
+  ([url] (redirect url :found *request*))
   ([url type] (redirect url type *request*))
   ([url type request] 
     (let [context (:context request)
@@ -76,8 +76,7 @@
                  :see-other 303
                  :not-modified 304
                  :proxy 305
-                 :temporary 307
-                 302)
+                 :temporary 307)
        :headers {"Location" url}
        :body ""})))
 
