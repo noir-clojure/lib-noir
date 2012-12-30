@@ -27,7 +27,7 @@
       (when canonical
         (if (= (headers "host") canonical)
           (app req)
-          (redirect (str (:scheme req) "://" canonical (:uri req))
+          (redirect (str (name (:scheme req)) "://" canonical (:uri req))
                     :permanent))))))
 
 (defn wrap-force-ssl
