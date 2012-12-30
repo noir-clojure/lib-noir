@@ -7,5 +7,7 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [cheshire "4.0.0"]
                  [ring "1.1.1"]
+                 [compojure "1.1.3"]
+                 [hiccup "1.0.2"]
                  [org.mindrot/jbcrypt "0.3m"]]
   :codox {:output-dir "doc/0.1.1"})
