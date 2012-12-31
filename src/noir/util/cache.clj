@@ -1,6 +1,6 @@
 (ns noir.util.cache)
 
-(def cached (atom {}))
+(defonce cached (atom {}))
 
 (defn invalidate-cache!
   "removes the id and the content associated with it from cache"
