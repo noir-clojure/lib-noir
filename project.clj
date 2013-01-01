@@ -10,4 +10,5 @@
                  [compojure "1.1.3"]
                  [hiccup "1.0.2"]
                  [org.mindrot/jbcrypt "0.3m"]]
-  :codox {:output-dir "doc/0.1.1"})
+  :plugins [[codox "0.6.4"]]
+  :codox {:output-dir "doc/0.3.1"})
