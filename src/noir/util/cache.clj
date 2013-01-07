@@ -38,9 +38,11 @@
          cur-time#   (.getTime (new java.util.Date))]     
      (if (or (not cached#)
              (and timeout# (> (- cur-time# (:time cached#)) timeout#)))       
-       (swap! cached assoc-in [:items ~id] 
-              {:content ~content 
-               :time (.getTime (new java.util.Date))}))     
+       (swap! cached update-in [:items ~id] 
+              (fn [cur-content#] 
+                {:content (or (try ~content (catch Exception ex#)) 
+                              (:content cur-content#)) 
+                 :time (.getTime (new java.util.Date))})))     
      (if (and max-size# (> (count (:items @noir.util.cache/cached)) max-size#))  
        (swap! cached (fn [cache#]
                        (update-in 
@@ -49,4 +51,4 @@
                             (sort-by :time)
                             (take max-size#)
                             (into {}))))))
-     (:content (get-in @noir.util.cache/cached [:items ~id])))) 
+     (:content (get-in @noir.util.cache/cached [:items ~id]))))
