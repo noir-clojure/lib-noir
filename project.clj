@@ -12,4 +12,3 @@
                  [org.mindrot/jbcrypt "0.3m"]]
   :plugins [[codox "0.6.4"]]
   :codox {:output-dir "doc/0.3.2"})
-
