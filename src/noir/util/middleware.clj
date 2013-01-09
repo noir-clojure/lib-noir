@@ -13,7 +13,7 @@
         [ring.middleware.multipart-params :only [wrap-multipart-params]])
   (:require [clojure.string :as s]))
 
-(defn- wrap-request-map [handler]
+(defn wrap-request-map [handler]
   (fn [req]
     (binding [*request* req]
       (handler req))))
