@@ -25,7 +25,7 @@
    (get-resource \"/css/screen.css\" )"
   [relative-path]
   (if relative-path
-    (->> (.replaceAll relative-path "/" File/separator)
+    (->> relative-path
          (str "public")
          (io/resource))))
 
