@@ -16,5 +16,5 @@ any ring-based web framework, such as mustache and compojure.
 You want to use leiningen, of course. Add this to your `:dependencies`
 
 ```clojure
-[lib-noir "0.3.3"]
+[lib-noir "0.3.4"]
 ```
