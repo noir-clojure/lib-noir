@@ -5,7 +5,7 @@
 (defn invalidate-cache!
   "removes the id and the content associated with it from cache"
   [id]
-  (swap! cached dissoc id))
+  (swap! cached update-in [:items] dissoc id))
 
 (defn set-cache-timeout!
   "set the expiriy time for cached items in seconds,
