@@ -2,19 +2,19 @@
 
 (defonce cached (atom {}))
 
-(defn invalidate-cache!
+(defn invalidate!
   "removes the id and the content associated with it from cache"
   [id]
-  (swap! cached dissoc id))
+  (swap! cached update-in [:items] dissoc id))
 
-(defn set-cache-timeout!
+(defn set-timeout!
   "set the expiriy time for cached items in seconds,
    if the item has been in cache longer than this time
    it will be swapped with a new version"
   [seconds]
   (swap! cached assoc-in [:options :timeout] (* 1000 seconds)))
 
-(defn set-cache-size!
+(defn set-size!
   "set the maximum size for the cache,
    when the cache grows larger than the
    size specified oldest items will be 
@@ -22,12 +22,12 @@
   [items]
   (swap! cached assoc-in [:options :size] items))
 
-(defn clear-cache!
+(defn clear!
   "remove all items which are currently cached"
   []
   (swap! cached assoc-in [:items] {}))
 
-(defmacro cache
+(defmacro cache!
   "checks if there is a cached copy of the content available,
    if so the cached version is returned, otherwise the content
    is evaluated"
