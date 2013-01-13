@@ -35,11 +35,13 @@
    Also checks the X-Forwarded-Proto header."
   [app]
   (fn [req]
-    (let [headers (:headers req)]
+    (let [headers (:headers req)
+          uri     (:uri req)
+          context (if (.contains url "://") "" (:context req))]
       (if (or (= :https (:scheme req))
               (= "https" (headers "x-forwarded-proto")))
         (app req)
-        (redirect (str "https://" (headers "host") (:uri req)) :permanent)))))
+        (redirect (str "https://" (headers "host") context uri) :permanent)))))
 
 (defn wrap-strip-trailing-slash
   "If the requested url has a trailing slash, remove it."
