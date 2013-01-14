@@ -26,15 +26,9 @@
   (cache! :baz "baz")
   (= [:bar :baz] (->> @cached :items (map keys))))
 
-(deftest set-timeout!-test
-  (do
-    (clear!)
-    (set-timeout! 1)
-    (cache! :foo "bar")
-    (Thread/sleep 1100)
-    (is (= "baz" (cache! :foo "baz")))))
-
-
-
-
-(run-tests)
+(deftest set-timeout!-test  
+  (clear!)
+  (set-timeout! 1)
+  (cache! :foo "bar")
+  (Thread/sleep 1100)
+  (is (= "baz" (cache! :foo "baz"))))
