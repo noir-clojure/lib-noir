@@ -2,7 +2,7 @@
   "Simple response helpers to change the content type, redirect, or return a canned response"
   (:use [noir.request :only [*request*]])
   (:refer-clojure :exclude [empty])
-  (:require [cheshire.custom :as json]))
+  (:require [cheshire.core :as json]))
 
 (defn- ->map [c]
   (if-not (map? c)
