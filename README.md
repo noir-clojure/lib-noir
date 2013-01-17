@@ -1,5 +1,7 @@
 # lib-noir
 
+[![Continuous Integration status](https://api.travis-ci.org/noir-clojure/lib-noir.png)](http://travis-ci.org/noir-clojure/lib-noir)
+
 A set of libraries for ring apps, including stateful sessions.
 
 All of these libraries were split out from the [Noir](https://github.com/noir-clojure/noir) web framework
