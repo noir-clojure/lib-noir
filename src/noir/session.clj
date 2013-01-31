@@ -48,12 +48,23 @@
      (remove! k)
      cur)))
 
-(defn update-in! [ks f & args]
-  (clojure.core/swap! 
+(defn update-in!
+  "'Updates' a value in the session, where ks is a
+   sequence of keys and f is a function that will
+   take the old value along with any supplied args and return
+   the new value. If any levels do not exist, hash-maps
+   will be created."
+  [ks f & args]
+  (clojure.core/swap!
     *noir-session*
     #(apply (partial update-in % ks f) args)))
 
-(defn assoc-in! [ks v]
+(defn assoc-in!
+  "Associates a value in the session, where ks is a
+   sequence of keys and v is the new value and returns
+   a new nested structure. If any levels do not exist,
+   hash-maps will be created."
+  [ks v]
   (clojure.core/swap! *noir-session* #(assoc-in % ks v)))
 
 
