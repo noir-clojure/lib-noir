@@ -48,6 +48,15 @@
      (remove! k)
      cur)))
 
+(defn update-in! [ks f & args]
+  (clojure.core/swap! 
+    *noir-session*
+    #(apply (partial update-in % ks f) args)))
+
+(defn assoc-in! [ks v]
+  (clojure.core/swap! *noir-session* #(assoc-in % ks v)))
+
+
 (defn ^:private noir-session [handler]
    "Store noir session keys in a :noir map, because other middleware that
    expects pure functions may delete keys, and simply merging won't work.
