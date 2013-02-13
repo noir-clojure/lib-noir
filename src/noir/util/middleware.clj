@@ -6,7 +6,12 @@
         [hiccup.middleware :only [wrap-base-url]]
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
-        [noir.session :only [mem wrap-noir-session]]
+        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]
+        [ring.middleware.params :only [wrap-params]]
+        [ring.middleware.multipart-params :only [wrap-multipart-params]]
+        [ring.middleware.nested-params :only [wrap-nested-params]]
+        [ring.middleware.keyword-params :only [wrap-keyword-params]]
+        [ring.middleware.flash :only [wrap-flash]]
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.resource :only [wrap-resource]]
         [ring.middleware.file-info :only [wrap-file-info]]
@@ -67,14 +72,18 @@
   - wrap-noir-session
   a session store can be passed in as an optional parameter, defaults to memory store"
   [app-routes & [store]]
-  (-> (apply routes app-routes)
-    (site)
+  (-> (apply routes app-routes)    
+    (wrap-params)    
+    (wrap-multipart-params)
+    (wrap-nested-params)
+    (wrap-keyword-params)    
+    (wrap-multipart-params)
     (wrap-request-map)
     (wrap-noir-validation)
-    (wrap-multipart-params)
     (wrap-noir-cookies)
     (wrap-noir-session 
-      {:store (or store (memory-store mem))})))
+      {:store (or store (memory-store mem))})
+    (wrap-noir-flash)))
 
 (defn war-handler
   "wraps the app-handler in middleware needed for WAR deployment:
