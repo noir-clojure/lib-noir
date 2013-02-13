@@ -81,9 +81,9 @@
     (wrap-request-map)
     (wrap-noir-validation)
     (wrap-noir-cookies)
+    (wrap-noir-flash)
     (wrap-noir-session 
-      {:store (or store (memory-store mem))})
-    (wrap-noir-flash)))
+      {:store (or store (memory-store mem))})))
 
 (defn war-handler
   "wraps the app-handler in middleware needed for WAR deployment:
