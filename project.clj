@@ -1,4 +1,4 @@
-(defproject lib-noir "0.3.6"
+(defproject lib-noir "0.3.7"
   :description "Libraries from Noir for your enjoyment."
   :url "http://webnoir.org"
   :license {:name "Eclipse Public License - v 1.0"
