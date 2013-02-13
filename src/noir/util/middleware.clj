@@ -65,16 +65,19 @@
 
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
-  - site 
+  - wrap-params  
+  - wrap-nested-params
+  - wrap-keyword-params
+  - wrap-multipart-params
   - wrap-request-map
   - wrap-noir-validation
-  - wrap-multipart-params
+  - wrap-noir-cookies
+  - wrap-noir-flash
   - wrap-noir-session
   a session store can be passed in as an optional parameter, defaults to memory store"
   [app-routes & [store]]
   (-> (apply routes app-routes)    
-    (wrap-params)    
-    (wrap-multipart-params)
+    (wrap-params)        
     (wrap-nested-params)
     (wrap-keyword-params)    
     (wrap-multipart-params)
