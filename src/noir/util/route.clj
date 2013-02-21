@@ -8,12 +8,10 @@
   [method url params & body]
   `(~method ~url ~params
      (let [[x# & xs# :as items#] (:access-rules noir.request/*request*)
-           redirect# (if (map? x#) (:redirect x#) "/")
-           rules#    (if (map? x#) xs# items#)]       
+           options?# (map? x#)
+           redirect# (if options?# (:redirect x#) "/")
+           rules#    (if options?# xs# items#)]       
        (if (or (nil? rules#)
                (some (fn [rule#] (rule# '~method ~url ~params)) rules#))
          (do ~@body)
          (noir.response/redirect redirect#)))))
-
-
-
