@@ -58,7 +58,12 @@
    passed or not, eg:
    (defn private-pages [method url params]
     (and (some #{url} [\"/private-page1\" \"/private-page2\"]) 
-         (session/get :user)))"
+         (session/get :user)))
+
+   by default if none of the rules return true the client will be redirected
+   to /, it's possible to pass a custom redirect target by providing a map 
+   with a redirect key pointing to a URI string before specifying the rules:
+   (wrap-access-rules handler {:redirect \"/unauthorized\"} rule1 rule2)"
   [handler & rules]
   (fn [req]
     (handler (assoc req :access-rules rules))))
