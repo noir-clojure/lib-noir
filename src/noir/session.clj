@@ -91,10 +91,10 @@
    Because noir-session mutates :session, it needs to duplicate ring/wrap-session
    functionality to handle these cases."
   (fn [request]
-    (binding [*noir-session* (atom (get-in request [:session :noir] {}))]
+    (binding [*noir-session* (atom (clojure.core/get-in request [:session :noir] {}))]
       (remove! :_flash)
       (when-let [resp (handler request)]
-        (if (=  (get-in request [:session :noir] {})  @*noir-session*)
+        (if (=  (clojure.core/get-in request [:session :noir] {})  @*noir-session*)
           resp
           (if (contains? resp :session)
             (if (nil? (:session resp))
@@ -131,8 +131,8 @@
   ([k]
      (flash-get k nil))
   ([k not-found]
-   (let [in (get-in @*noir-flash* [:incoming k])
-         out (get-in @*noir-flash* [:outgoing k])]
+   (let [in (clojure.core/get-in @*noir-flash* [:incoming k])
+         out (clojure.core/get-in @*noir-flash* [:outgoing k])]
      (or out in not-found))))
 
 (defn ^:private noir-flash [handler]
