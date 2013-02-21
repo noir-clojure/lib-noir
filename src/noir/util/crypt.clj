@@ -15,13 +15,13 @@
                          (memfn toString)
                          [salt data])]
               (apply str [s d s])))
-        sha1-obj (doto (MessageDigest/getInstance instance-type)
+        hash-obj (doto (MessageDigest/getInstance instance-type)
                    .reset
                    (.update
                     (.getBytes _)))]
     (apply str
            (map (partial format "%02x")
-                (.digest sha1-obj)))))
+                (.digest hash-obj)))))
 
 (defn md5
   [data & salt]
