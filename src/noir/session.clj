@@ -2,7 +2,7 @@
   "Stateful session handling functions. Uses a memory-store by
   default, but can use a custom store by supplying a :session-store
   option to server/start."
-  (:refer-clojure :exclude [get remove swap!])
+  (:refer-clojure :exclude [get get-in remove swap!])
   (:use ring.middleware.session
         ring.middleware.session.memory
         ring.middleware.flash))
@@ -23,6 +23,13 @@
   ([k default]
     (clojure.core/get @*noir-session* k default)))
 
+(defn get-in
+  "Gets the value at the path specified by the vector ks from the session,
+  returns nil if it doesn't exist."
+  ([ks] (get-in ks nil))
+  ([ks default]
+    (clojure.core/get-in @*noir-session* ks default)))
+
 (defn swap!
   "Replace the current session's value with the result of executing f with
   the current value and args."
@@ -39,6 +46,14 @@
   [k]
   (clojure.core/swap! *noir-session* dissoc k))
 
+(defn assoc-in!
+  "Associates a value in the session, where ks is a
+   sequence of keys and v is the new value and returns
+   a new nested structure. If any levels do not exist,
+   hash-maps will be created."
+  [ks v]
+  (clojure.core/swap! *noir-session* #(assoc-in % ks v)))
+
 (defn get!
   "Destructive get from the session. This returns the current value of the key
   and then removes it from the session."
@@ -47,6 +62,15 @@
    (let [cur (get k default)]
      (remove! k)
      cur)))
+
+(defn get-in!
+  "Destructive get from the session. This returns the current value of the path
+  specified by the vector ks and then removes it from the session."
+  ([ks] (get-in! ks nil))
+  ([ks default]
+    (let [cur (clojure.core/get-in @*noir-session* ks default)]
+      (assoc-in! ks nil)
+      cur)))
 
 (defn update-in!
   "'Updates' a value in the session, where ks is a
@@ -58,15 +82,6 @@
   (clojure.core/swap!
     *noir-session*
     #(apply (partial update-in % ks f) args)))
-
-(defn assoc-in!
-  "Associates a value in the session, where ks is a
-   sequence of keys and v is the new value and returns
-   a new nested structure. If any levels do not exist,
-   hash-maps will be created."
-  [ks v]
-  (clojure.core/swap! *noir-session* #(assoc-in % ks v)))
-
 
 (defn ^:private noir-session [handler]
    "Store noir session keys in a :noir map, because other middleware that
