@@ -25,8 +25,7 @@
 
 (defn md5
   [data & salt]
-  (let [hash "MD5"]
-    (hasher hash data salt)))
+  (hasher "MD5" data salt))
 
 (defn sha1 
   [data & salt]
