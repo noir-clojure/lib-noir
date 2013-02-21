@@ -14,7 +14,7 @@ Some of the core features includes the following:
 * route filtering and redirection
 * password hashing using [jBcryt](http://www.mindrot.org/projects/jBCrypt/) 
 
-See the [API](http://www.luminusweb.net/noir-api/index.html) for more details.
+See the [API](http://yogthos.github.com/lib-noir/index.html) for more details.
 
 This library was originally split out from the [Noir](https://github.com/noir-clojure/noir) web framework
 for your enjoyment.
