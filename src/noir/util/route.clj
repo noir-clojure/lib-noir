@@ -10,8 +10,9 @@
          options?# (map? x#)
          redirect# (if options?# (:redirect x#) "/")
          rules#    (if options?# xs# items#)]
-     (if-not (or (empty? rules#) 
-           (some (fn [rule#] (rule# '~method ~url ~params)) rules#))
+     (or 
+       (or (empty? rules#) 
+           (some (fn [rule#] (rule# '~method ~url ~params)) rules#))       
        (noir.response/redirect redirect#))))
 
 (defmacro restricted
