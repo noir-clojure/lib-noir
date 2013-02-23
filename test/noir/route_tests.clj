@@ -6,7 +6,7 @@
 (defn r2 [m url params] false)
 
 (deftest test-redirect 
-  (binding [noir.request/*request* {:access-rules [[{:redirect "/bar"} r1 r2]]}]
+  (binding [noir.request/*request* {:access-rules [[{:redirect "/bar"} r2 r2]]}]
     (is (= {:status 302, :headers {"Location" "/bar"}, :body ""} 
            (restricted method "/restricted" nil "foo")))))
 
