@@ -56,6 +56,7 @@
   "wraps the handler with the supplied access rules, each rule accepts
    method, url, and params and returns a boolean indicating whether it
    passed or not, eg:
+
    (defn private-pages [method url params]
     (and (some #{url} [\"/private-page1\" \"/private-page2\"]) 
          (session/get :user)))
@@ -63,10 +64,22 @@
    by default if none of the rules return true the client will be redirected
    to /, it's possible to pass a custom redirect target by providing a map 
    with a redirect key pointing to a URI string before specifying the rules:
-   (wrap-access-rules handler {:redirect \"/unauthorized\"} rule1 rule2)"
+
+   (wrap-access-rules handler {:redirect \"/unauthorized\"} rule1 rule2)
+
+   note that you can use multiple wrap-access-rules wrappers together to
+   create sets of rules each redirecting to a different URI, eg:
+
+   (-> handler 
+       (wrap-access-rules rule1 rule2)
+       (wrap-access-rules {:redirect \"/unauthorized1\"} rule3 rule4)
+       (wrap-access-rules {:redirect \"/unauthorized2\"} rule5)
+
+   the first set of rules that fails will cause a redirect to its redirect target"
   [handler & rules]
   (fn [req]
-    (handler (assoc req :access-rules rules))))
+    (handler (update-in req [:access-rules] 
+                        #(if % (conj % rules) [rules])))))
 
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
