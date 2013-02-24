@@ -95,11 +95,11 @@
   :store - optional session store, defaults to memory store
   :multipart - an optional map of multipart-params middleware options"
   [app-routes & {:keys [store multipart]}]
-  (-> (apply routes app-routes)    
+  (-> (apply routes app-routes)
     (api)
     (wrap-file-info)
     (with-opts wrap-multipart-params multipart)
-    (wrap-request-map)    
+    (wrap-request-map)
     (wrap-noir-validation)
     (wrap-noir-cookies)
     (wrap-noir-flash)
@@ -111,6 +111,6 @@
   - wrap-resource
   - wrap-base-url"
   [app-handler]
-  (-> app-handler    
+  (-> app-handler
     (wrap-resource "public")    
     (wrap-base-url)))
