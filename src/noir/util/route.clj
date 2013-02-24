@@ -23,7 +23,7 @@
             (loop [rules# (:access-rules noir.request/*request*)]
               (let [result# (check-rules ~method ~url ~params (first rules#))]                
                 (cond 
-                  (map? result#) result#
+                  (= 302 (:status result#)) result#
                   (empty? rules#) (do ~@body)
                   :else (recur (rest rules#)))))))
 
