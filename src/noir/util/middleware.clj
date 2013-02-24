@@ -2,21 +2,21 @@
   (:use [noir.request :only [*request*]] 
         [noir.response :only [redirect]]        
         [compojure.core :only [routes]]
-        [compojure.handler :only [site]]
+        [compojure.handler :only [api]]
         [hiccup.middleware :only [wrap-base-url]]
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
-        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]
-        [ring.middleware.params :only [wrap-params]]
-        [ring.middleware.multipart-params :only [wrap-multipart-params]]
-        [ring.middleware.nested-params :only [wrap-nested-params]]
-        [ring.middleware.keyword-params :only [wrap-keyword-params]]
-        [ring.middleware.flash :only [wrap-flash]]
+        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]        
+        [ring.middleware.multipart-params :only [wrap-multipart-params]]                
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.resource :only [wrap-resource]]
-        [ring.middleware.file-info :only [wrap-file-info]]
-        [ring.middleware.multipart-params :only [wrap-multipart-params]])
+        [ring.middleware.file-info :only [wrap-file-info]])
   (:require [clojure.string :as s]))
+
+(defn- with-opts [routes middleware opts]
+  (if opts
+    (middleware routes opts)
+    (middleware routes)))
 
 (defn wrap-request-map [handler]
   (fn [req]
@@ -83,23 +83,23 @@
 
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
-  - wrap-params  
-  - wrap-nested-params
-  - wrap-keyword-params
+  - api
+  - wrap-file-info
   - wrap-multipart-params
   - wrap-request-map
   - wrap-noir-validation
   - wrap-noir-cookies
   - wrap-noir-flash
   - wrap-noir-session
-  a session store can be passed in as an optional parameter, defaults to memory store"
-  [app-routes & [store]]
+
+  :store - optional session store, defaults to memory store
+  :multipart - an optional map of multipart-params middleware options"
+  [app-routes & {:keys [store multipart]}]
   (-> (apply routes app-routes)    
-    (wrap-params)        
-    (wrap-nested-params)
-    (wrap-keyword-params)    
-    (wrap-multipart-params)
-    (wrap-request-map)
+    (api)
+    (wrap-file-info)
+    (with-opts wrap-multipart-params multipart)
+    (wrap-request-map)    
     (wrap-noir-validation)
     (wrap-noir-cookies)
     (wrap-noir-flash)
@@ -109,10 +109,8 @@
 (defn war-handler
   "wraps the app-handler in middleware needed for WAR deployment:
   - wrap-resource
-  - wrap-base-url
-  - wrap-file-info"
+  - wrap-base-url"
   [app-handler]
   (-> app-handler    
-    (wrap-resource "public")
-    (wrap-file-info)
+    (wrap-resource "public")    
     (wrap-base-url)))
