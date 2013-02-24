@@ -1,4 +1,4 @@
-(defproject lib-noir "0.4.5"
+(defproject lib-noir "0.4.6"
   :description "Libraries from Noir for your enjoyment."
   :url "http://webnoir.org"
   :license {:name "Eclipse Public License - v 1.0"
@@ -8,7 +8,8 @@
                  [cheshire "5.0.2"]
                  [ring "1.1.8"]
                  [compojure "1.1.5"]
+                 [clout "1.1.0"]
                  [hiccup "1.0.2"]
                  [org.mindrot/jbcrypt "0.3m"]]
   :plugins [[codox "0.6.4"]]
-  :codox {:output-dir "doc/0.4.5"})
+  :codox {:output-dir "doc/0.4.6"})
