@@ -9,8 +9,8 @@
          options?# (map? x#)
          redirect# (if options?# (:redirect x#) "/")
          rules#    (if options?# xs# items#)]
-     (or 
-       (or (empty? rules#) 
+     (or
+       (or (empty? rules#)
            (some (fn [rule#] (rule# '~method ~url ~params)) rules#))       
        (noir.response/redirect redirect#))))
 
@@ -22,7 +22,7 @@
   `(~method ~url ~params
             (loop [rules# (:access-rules noir.request/*request*)]
               (let [result# (check-rules ~method ~url ~params (first rules#))]                
-                (cond 
+                (cond
                   (= 302 (:status result#)) result#
                   (empty? rules#) (do ~@body)
                   :else (recur (rest rules#)))))))
@@ -36,7 +36,7 @@
    (access-rule \"/users/:id\" (= (first params) \"foo\"))
 
    The above rule will only be checked for urls matching \"/users/:id\"
-   and succeed if :id is equal to \"foo\""  
+   and succeed if :id is equal to \"foo\""
   [target-url condition]
   `(fn [~'method ~'url ~'params]
      (or (nil?  (route-matches ~target-url {:uri ~'url})) 
