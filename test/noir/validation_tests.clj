@@ -5,8 +5,10 @@
 (deftest test-nil
   (is (= true
          (validation/not-nil? true)))
-  (is (= 23
+  (is (= true
          (validation/not-nil? 23)))
+  (is (= true
+         (validation/not-nil? false)))
   (is (= false
          (validation/not-nil? nil))))
 
@@ -23,14 +25,14 @@
          (validation/max-length? "abcde" 4))))
 
 (deftest test-matches-regex
-  (is (= "abcde"
+  (is (= true
          (validation/matches-regex? "abcde" #"^[a-zA-Z0-9_-]{3,20}")))
-  (is (= "abc_123-xyz"
+  (is (= true
          (validation/matches-regex? "abc_123-xyz" #"^[a-zA-Z0-9_-]{3,20}")))
-  (is (= nil
+  (is (= false
          (validation/matches-regex? "ab" #"^[a-zA-Z0-9_-]{3,20}")))
-  (is (= nil
+  (is (= false
          (validation/matches-regex? "abc_@#" #"^[a-zA-Z0-9_-]{3,20}")))
-  (is (= nil
+  (is (= false
          (validation/matches-regex? "abcdefghijklmnopqrstuvwxyz"
                                     #"^[a-zA-Z0-9_-]{3,20}"))))
