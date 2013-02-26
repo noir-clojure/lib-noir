@@ -22,7 +22,7 @@
 (defn not-nil?
   "Returns true if v is not nil"
   [v]
-  (or v (false? v)))
+  (boolean (or v (false? v))))
 
 (defn min-length?
   "Returns true if v is greater than or equal to the given len"
@@ -70,6 +70,13 @@
   [v n]
   (and (valid-number? v)
        (> (Long/parseLong v) n)))
+
+
+(defn matches-regex?
+  "Returns true if the string matches the given regular expression"
+  [v regex]
+  (boolean (re-matches regex v)))
+
 
 (declare ^:dynamic *errors*)
 
