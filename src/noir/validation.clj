@@ -71,6 +71,13 @@
   (and (valid-number? v)
        (> (Long/parseLong v) n)))
 
+
+(defn matches-regex?
+  "Return true if the string matches the given regular expression"
+  [v regex]
+  (re-matches regex v))
+
+
 (declare ^:dynamic *errors*)
 
 ;;errors and rules
