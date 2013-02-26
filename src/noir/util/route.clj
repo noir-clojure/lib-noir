@@ -27,17 +27,20 @@
                   (empty? rules#) (do ~@body)
                   :else (recur (rest rules#)))))))
 
-(defmacro access-rule
+(defmacro access-rule 
   "Creates an access rule for the given url pattern.
-   The method, url, and params variables are accessible
-   within the scope of the macro. The condition must return
-   a boolean value to indicate where the rule passes, eg:
+   The second argument must be a vector with three items
+   that represent the arguments for the rule: [method url params].
    
-   (access-rule \"/users/:id\" (= (first params) \"foo\"))
-
+   The condition must return a boolean value to indicate where 
+   the rule passes, eg:
+   
+   (access-rule \"/users/:id\" [_ _ params] (= (first params) \"foo\"))
+   
    The above rule will only be checked for urls matching \"/users/:id\"
-   and succeed if :id is equal to \"foo\""
-  [target-url condition]
-  `(fn [~'method ~'url ~'params]
-     (or (nil?  (route-matches ~target-url {:uri ~'url})) 
+   and succeed if :id is equal to \"foo\"
+  "
+  [target-url fn-params condition]
+  `(fn ~fn-params
+     (or (nil?  (route-matches ~target-url {:uri (second ~fn-params)})) 
          ~condition)))
