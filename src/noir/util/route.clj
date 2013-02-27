@@ -10,8 +10,9 @@
          redirect# (if options?# (:redirect x#) "/")
          rules#    (if options?# xs# items#)]
      (or
-       (or (empty? rules#)
-           (some (fn [rule#] (rule# '~method ~url ~params)) rules#))       
+       (boolean
+         (or (empty? rules#)
+             (some (fn [rule#] (rule# '~method ~url ~params)) rules#)))       
        (noir.response/redirect redirect#))))
 
 (defmacro restricted
@@ -34,7 +35,11 @@
    
    The condition must return a boolean value to indicate where 
    the rule passes, eg:
-   
+   (access-rule \"/test\" [method url params] 
+     (and (= (name method) \"GET\")
+          (= url \"test\")
+          (zero? (count params))))
+
    (access-rule \"/users/:id\" [_ _ params] (= (first params) \"foo\"))
    
    The above rule will only be checked for urls matching \"/users/:id\"
