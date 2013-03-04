@@ -46,4 +46,4 @@ changes have been made over time.
 
 ### Contributors
 
-There is a very pretty list of contributrs [here](https://github.com/noir-clojure/lib-noir/graphs/contributors)
+There is a very pretty list of contributors [here](https://github.com/noir-clojure/lib-noir/graphs/contributors)
