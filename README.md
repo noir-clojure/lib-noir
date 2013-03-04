@@ -39,11 +39,6 @@ A lot of these libraries were originally written by
 deprecation. These libraries were split out into this library and additions and
 changes have been made over time.
 
-Here is a likely incomplete list of credits that we can add to over time. If
-you've contributed code to lib-noir or to any of the original libraries prior to
-their split from noir itself, please issue a pull request adding your name to
-this list.
-
 ### Maintainers
 
 * [Dmitri Sotnikov](https://github.com/yogthos)
@@ -51,8 +46,4 @@ this list.
 
 ### Contributors
 
-* [Denis Labaye](https://github.com/denlab)
-* [Ryan Kelker](https://github.com/runexec)
-* [Edward Tsech](https://github.com/edtsech)
-* [arosequist](https://github.com/arosequist)
-* [Konrad Garus](https://github.com/konrad-garus)
+There is a very pretty list of contributrs [here](https://github.com/noir-clojure/lib-noir/graphs/contributors)
