@@ -30,3 +30,29 @@ You want to use [Leiningen](https://github.com/technomancy/leiningen), of course
 ```clojure
 [lib-noir "0.4.6"]
 ```
+
+## Credits
+
+A lot of these libraries were originally written by
+[Chris Granger](https://github.com/ibdknox) and included in the
+[Noir](https://github.com/noir-clojure/noir) web framework before its
+deprecation. These libraries were split out into this library and additions and
+changes have been made over time.
+
+Here is a likely incomplete list of credits that we can add to over time. If
+you've contributed code to lib-noir or to any of the original libraries prior to
+their split from noir itself, please issue a pull request adding your name to
+this list.
+
+### Maintainers
+
+* [Dmitri Sotnikov](https://github.com/yogthos)
+* [Anthony Grimes](https://github.com/Raynes)
+
+### Contributors
+
+* [Denis Labaye](https://github.com/denlab)
+* [Ryan Kelker](https://github.com/runexec)
+* [Edward Tsech](https://github.com/edtsech)
+* [arosequist](https://github.com/arosequist)
+* [Konrad Garus](https://github.com/konrad-garus)
