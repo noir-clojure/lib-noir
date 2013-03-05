@@ -49,7 +49,7 @@
 
 
 (defn valid-number?
-  "Returns true if the string can be cast to a Long"
+  "Returns true if the string can be parsed to a Long"
   [v]
   (try
     (Long/parseLong v)
