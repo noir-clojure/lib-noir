@@ -97,6 +97,7 @@
   [app-routes & {:keys [store multipart]}]
   (-> (apply routes app-routes)
     (api)
+    (wrap-resource "public")
     (wrap-file-info)
     (with-opts wrap-multipart-params multipart)
     (wrap-request-map)
@@ -111,6 +112,5 @@
   - wrap-resource
   - wrap-base-url"
   [app-handler]
-  (-> app-handler
-    (wrap-resource "public")    
+  (-> app-handler        
     (wrap-base-url)))
