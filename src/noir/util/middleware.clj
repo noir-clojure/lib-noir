@@ -83,9 +83,9 @@
 
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
-  - api  
-  - wrap-multipart-params
   - wrap-request-map
+  - api
+  - wrap-multipart-params
   - wrap-noir-validation
   - wrap-noir-cookies
   - wrap-noir-flash
@@ -95,9 +95,9 @@
   :multipart - an optional map of multipart-params middleware options"
   [app-routes & {:keys [store multipart]}]
   (-> (apply routes app-routes)
-      (api)        
-      (with-opts wrap-multipart-params multipart)
       (wrap-request-map)
+      (api)
+      (with-opts wrap-multipart-params multipart)
       (wrap-noir-validation)
       (wrap-noir-cookies)
       (wrap-noir-flash)
