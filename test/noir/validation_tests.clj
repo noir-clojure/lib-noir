@@ -36,3 +36,17 @@
   (is (= false
          (validation/matches-regex? "abcdefghijklmnopqrstuvwxyz"
                                     #"^[a-zA-Z0-9_-]{3,20}"))))
+
+(deftest test-is-email
+  (is (= true
+         (validation/is-email? "ab@cde.com")))
+  (is (= true
+         (validation/is-email? "TEST@NOIR.ORG")))
+  (is (= false
+         (validation/is-email? "@abc.com")))
+  (is (= false
+         (validation/is-email? "test@abc")))
+  (is (= false
+         (validation/is-email? "test")))
+  (is (= false
+         (validation/is-email? "test@.net"))))
