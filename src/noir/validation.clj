@@ -34,10 +34,17 @@
   [v len]
   (<= (count v) len))
 
+
+(defn matches-regex?
+  "Returns true if the string matches the given regular expression"
+  [v regex]
+  (boolean (re-matches regex v)))
+
+
 (defn is-email?
   "Returns true if v is an email address"
   [v]
-  (re-matches #"(?i)[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" v))
+  (matches-regex? v #"(?i)[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"))
 
 
 (defn valid-file?
@@ -70,12 +77,6 @@
   [v n]
   (and (valid-number? v)
        (> (Long/parseLong v) n)))
-
-
-(defn matches-regex?
-  "Returns true if the string matches the given regular expression"
-  [v regex]
-  (boolean (re-matches regex v)))
 
 
 (declare ^:dynamic *errors*)
