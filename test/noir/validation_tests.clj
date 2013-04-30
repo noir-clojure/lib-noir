@@ -41,6 +41,8 @@
   (is (= true
          (validation/is-email? "ab@cde.com")))
   (is (= true
+         (validation/is-email? "ab+c@cde.com")))
+  (is (= true
          (validation/is-email? "TEST@NOIR.ORG")))
   (is (= false
          (validation/is-email? "@abc.com")))
