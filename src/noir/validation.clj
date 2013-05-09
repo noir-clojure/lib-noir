@@ -75,8 +75,14 @@
 (defn less-than?
   "Returns true if the string represents a number < given."
   [v n]
-  (not (greater-than? v n)))
+  (and (valid-number? v)
+       (< (Long/parseLong v) n)))
 
+(defn equal-to?
+  "Returns true if the string represents a number = given."
+  [v n]
+  (and (valid-number? v)
+       (== (Long/parseLong v) n)))
 
 (declare ^:dynamic *errors*)
 
