@@ -49,3 +49,10 @@
   `(fn ~fn-params
      (or (nil?  (route-matches ~target-url {:uri (second ~fn-params)})) 
          ~condition)))
+
+(defmacro def-restricted-routes 
+  "same as Compojure defroutes, except all routes will be restricted"
+  [name & routes]
+  `(compojure.core/defroutes ~name
+     ~@(for [route# routes] 
+         (cons 'noir.util.route/restricted route#))))
