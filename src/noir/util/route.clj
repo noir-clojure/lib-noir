@@ -53,6 +53,7 @@
 (defmacro def-restricted-routes 
   "accepts a name and one or more routes, prepends restricted to all
    routes and calls Compojure defroutes, eg:
+   
    (def-restricted-routes private-pages
      (GET \"/profile\" [] (show-profile)
      (GET \"/my-secret-page\" [] (show-secret-page))
