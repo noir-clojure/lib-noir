@@ -1,6 +1,6 @@
 (defproject lib-noir "0.5.4"
   :description "Libraries from Noir for your enjoyment."
-  :url "http://webnoir.org"
+  :url "https://github.com/noir-clojure/lib-noir"
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo}
