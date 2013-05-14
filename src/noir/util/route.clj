@@ -51,7 +51,11 @@
          ~condition)))
 
 (defmacro def-restricted-routes 
-  "same as Compojure defroutes, except all routes will be restricted"
+  "accepts a name and one or more routes, prepends restricted to all
+   routes and calls Compojure defroutes, eg:
+   (def-restricted-routes private-pages
+     (GET \"/profile\" [] (show-profile)
+     (GET \"/my-secret-page\" [] (show-secret-page))"
   [name & routes]
   `(compojure.core/defroutes ~name
      ~@(for [route# routes] 
