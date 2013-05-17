@@ -44,5 +44,3 @@
     (is (= {:uri "/bar"} ((wrap-rewrites handler #"/foo" "/bar") {:uri "/foo"})))    
     (is (thrown? Exception ((wrap-rewrites handler #"/foo" "/bar" #"/baz") {:uri "/foo"})))
     (is (= {:uri "/baz"} ((wrap-rewrites handler) {:uri "/baz"})))))
-
-(test-wrap-rewrites)
