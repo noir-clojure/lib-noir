@@ -23,7 +23,7 @@
   have the corresponding (global) replacement performed before calling the wrapped handler."
   [handler & rewrites]
   (if-not (even? (count rewrites))
-    (throw (Exception. (str "must have an even number of rewrites: " rewrites))))
+    (throw (ex-info "must have an even number of rewrites: " {:rewrites rewrites})))
   (let [rules (partition 2 rewrites)]
     (fn [req]
       (handler (update-in req [:uri]

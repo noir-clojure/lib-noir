@@ -39,9 +39,10 @@
   (is (= {:uri "/foo"} ((wrap wrap-strip-trailing-slash) {:uri "/foo/"}))))
 
 (deftest test-wrap-rewrites
-  (let [handler (fn [updated-req] updated-req)]
+  (let [handler (fn [updated-req] updated-req)]    
     (is (= {:uri "/bar"} ((wrap-rewrites handler #"/foo" "/bar") {:uri "/foo"})))
     (is (= {:uri "/bar"} ((wrap-rewrites handler #"/foo" "/bar") {:uri "/foo"})))    
     (is (thrown? Exception ((wrap-rewrites handler #"/foo" "/bar" #"/baz") {:uri "/foo"})))
     (is (= {:uri "/baz"} ((wrap-rewrites handler) {:uri "/baz"})))))
 
+(test-wrap-rewrites)
