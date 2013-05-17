@@ -18,6 +18,20 @@
     (middleware routes opts)
     (middleware routes)))
 
+(defn wrap-rewrites
+  "Rewrites should be [regex replacement] pairs. The first regex that matches the request's URI will
+  have the corresponding (global) replacement performed before calling the wrapped handler."
+  [handler & rewrites]
+  (let [rules (partition 2 rewrites)]
+    (fn [req]
+      (handler (update-in req [:uri]
+                          (fn [uri]
+                            (or (first (keep (fn [[pattern replacement]]
+                                               (when (re-find pattern uri)
+                                                 (s/replace uri pattern replacement)))
+                                             rules))
+                                uri)))))))
+
 (defn wrap-request-map [handler]
   (fn [req]
     (binding [*request* req]
