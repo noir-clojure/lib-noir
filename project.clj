@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [cheshire "5.1.1"]
+                 [cheshire "5.1.2"]
                  [ring "1.1.8"]
                  [compojure "1.1.5"]
                  [clout "1.1.0"]
