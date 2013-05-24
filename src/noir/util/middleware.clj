@@ -97,6 +97,9 @@
     (handler (update-in req [:access-rules] 
                         #(if % (conj % rules) [rules])))))
 
+(defn- wrap-middleware [routes [wrapper & more]]
+  (if wrapper (recur (wrapper routes) more) routes))
+
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
   - wrap-request-map
@@ -108,9 +111,11 @@
   - wrap-noir-session
 
   :store - optional session store, defaults to memory store
-  :multipart - an optional map of multipart-params middleware options"
-  [app-routes & {:keys [store multipart]}]
+  :multipart - an optional map of multipart-params middleware options
+  :middleware - a vector of any custom middleware wrappers you wish to supply"
+  [app-routes & {:keys [store multipart middleware]}]
   (-> (apply routes app-routes)
+      (wrap-middleware middleware)
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
