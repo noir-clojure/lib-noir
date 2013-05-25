@@ -100,6 +100,11 @@
 (defn- wrap-middleware [routes [wrapper & more]]
   (if wrapper (recur (wrapper routes) more) routes))
 
+(defn- set-access-rules [handler [rule & access-rules]]  
+  (if rule 
+    (recur (apply (partial wrap-access-rules handler) rule) access-rules)
+    handler))
+
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
   - wrap-request-map
@@ -112,13 +117,20 @@
 
   :store - optional session store, defaults to memory store
   :multipart - an optional map of multipart-params middleware options
-  :middleware - a vector of any custom middleware wrappers you wish to supply"
-  [app-routes & {:keys [store multipart middleware]}]
+  :middleware - a vector of any custom middleware wrappers you wish to supply
+  :access-rules - a vector of access rules you wish to supply,
+                  each rule should be a vector of parameters accepted by wrap-access-rules, eg:
+
+                  :access-rules [[{:redirect \"/unauthorized1\"} rule1]
+                                 [{:redirect \"/unauthorized2\"} rule2 rule3]       
+                                 [rules4 rule5]]"   
+  [app-routes & {:keys [store multipart middleware access-rules]}]  
   (-> (apply routes app-routes)
-      (wrap-middleware middleware)
+      (wrap-middleware middleware)      
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
+      (set-access-rules access-rules)      
       (wrap-noir-validation)
       (wrap-noir-cookies)
       (wrap-noir-flash)
