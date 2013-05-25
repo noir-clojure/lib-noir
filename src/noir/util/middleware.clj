@@ -127,6 +127,7 @@
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
+      (wrap-middleware middleware)
       (set-access-rules access-rules)      
       (wrap-noir-validation)
       (wrap-noir-cookies)
