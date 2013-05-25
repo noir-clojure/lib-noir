@@ -123,7 +123,6 @@
                                  [rules4 rule5]]"   
   [app-routes & {:keys [store multipart middleware access-rules]}]  
   (-> (apply routes app-routes)
-      (wrap-middleware middleware)
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
