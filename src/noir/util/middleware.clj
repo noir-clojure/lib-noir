@@ -13,6 +13,11 @@
         [ring.middleware.file-info :only [wrap-file-info]])
   (:require [clojure.string :as s]))
 
+(defn wrap-if [handler pred wrapper & args]
+  (if pred
+    (apply wrapper handler args)
+    handler))
+
 (defn- with-opts [routes middleware opts]
   (if opts
     (middleware routes opts)
