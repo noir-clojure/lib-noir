@@ -2,8 +2,12 @@
   (:use clojure.test noir.util.middleware))
 
 
-(defn wrap [wrapper & params] 
-  (apply (partial wrapper (fn [req] req)) params))
+(defn wrap [wrapper & params]
+  (apply wrapper (fn [req] req) params))
+
+(deftest test-wrap-if-test
+  (is (= 1 (wrap-if 1 false + 1 1)))
+  (is (= 3 (wrap-if 1 true + 1 1))))
 
 (deftest test-wrap-canonical-host
   (let [wrapped (wrap wrap-canonical-host "foo.net")
