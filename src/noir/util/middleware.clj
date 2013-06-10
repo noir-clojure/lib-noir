@@ -75,37 +75,43 @@
 
 (defn wrap-access-rules
   "wraps the handler with the supplied access rules, each rule accepts
-   method, url, and params and returns a boolean indicating whether it
-   passed or not, eg:
+   the request and returns a boolean indicating whether it passed or not, eg:
 
-   (defn private-pages [method url params]
-    (and (some #{url} [\"/private-page1\" \"/private-page2\"]) 
+   (defn private-pages [req]
+    (and (some #{(:uri req)} [\"/private-page1\" \"/private-page2\"]) 
          (session/get :user)))
 
    by default if none of the rules return true the client will be redirected
-   to /. It's possible to pass a custom redirect target by providing a map 
-   with a redirect key pointing to a URI before specifying the rules.
+   to /. It's possible to pass a custom redirect target by specifying the 
+   :redirect key pointing to a URI.
 
    The value of the :redirect key can either be a string or a function that
-   takes no arguments, eg:
-   
-   (wrap-access-rules handler {:redirect \"/unauthorized\"} rule1 rule2)
-   (wrap-access-rules handler {:redirect (fn [] (println \"redirecting\")
-                                                \"/unauthorized\")} rule3)
+   takes the request as its argument.
 
+   The rules can be supplied either as a function or a map indicating the
+   redirect target and the rules that redirect to that target, eg:
+   
+   (wrap-access-rules handler some-rule
+                              another-rule                              
+                              {:redirect \"/unauthorized\"
+                               :rules [rule3 rule4]}
+                              {:redirect (fn [req] (println \\\"redirecting\\\")
+                                           \\\"/unauthorized\\\")
+                               :rules [rule5]})
+   
    the first set of rules that fails will cause a redirect to its redirect target"
-  [handler & rules]
-  (fn [req]
-    (handler (update-in req [:access-rules] 
-                        #(if % (conj % rules) [rules])))))
+  [handler rules]
+  (if (empty? rules)
+    handler
+    (let [{mapped-rules true
+           unmapped-rules false} (group-by map? rules)
+          rule-set (conj mapped-rules {:redirect "/" :rules unmapped-rules})]
+      (fn [req]
+        (handler
+          (assoc req :access-rules rule-set))))))
 
 (defn- wrap-middleware [routes [wrapper & more]]
   (if wrapper (recur (wrapper routes) more) routes))
-
-(defn- set-access-rules [handler [rule & access-rules]]  
-  (if rule 
-    (recur (apply (partial wrap-access-rules handler) rule) access-rules)
-    handler))
 
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
@@ -121,18 +127,19 @@
   :multipart - an optional map of multipart-params middleware options
   :middleware - a vector of any custom middleware wrappers you wish to supply
   :access-rules - a vector of access rules you wish to supply,
-                  each rule should be a vector of parameters accepted by wrap-access-rules, eg:
+                  each rule should a function or a rule map as specified in wrap-access-rules, eg:
 
-                  :access-rules [[{:redirect \"/unauthorized1\"} rule1]
-                                 [{:redirect \"/unauthorized2\"} rule2 rule3]       
-                                 [rules4 rule5]]"   
+                  :access-rules [rule1
+                                 rule2
+                                 {:redirect \"/unauthorized1\"
+                                  :rules [rule3 rule4]}]"   
   [app-routes & {:keys [store multipart middleware access-rules]}]  
   (-> (apply routes app-routes)
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
       (wrap-middleware middleware)
-      (set-access-rules access-rules)      
+      (wrap-access-rules access-rules)      
       (wrap-noir-validation)
       (wrap-noir-cookies)
       (wrap-noir-flash)
