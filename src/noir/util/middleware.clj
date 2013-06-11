@@ -104,10 +104,10 @@
    It is also posible to restrict access rules to only active for specific URI patterns:
 
    (wrap-access-rules handler {:redirect \"/unauthorized\"
-                               :uri "\"/users/*\""
+                               :uri \"/users/*\"
                                :rules [rule1 rule2]}})
 
-   above, rule1 and rule2 will only be activated for URIs that start with /users/"
+   above, rule1 and rule2 will only be activated for URIs that start with /users/
    "
   [handler rules]
   (if (empty? rules)
