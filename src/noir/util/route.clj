@@ -31,14 +31,14 @@
 (defmacro access-rule
  "Creates an access rule for the given url pattern.
   The second argument must be a vector with a single
-  item representing the request: [request].
+  item representing the request.
 
   The rule must return a boolean value to indicate whether
   the rule passes, eg:
-  (access-rule \"/test\" [{:keys [request-method uri params]}]
-    (and (= request-method :get)
-         (= uri \"/test\")
-         (zero? (count params))))
+  (access-rule \"/test\" [request]
+    (and (= (:request-method request) :get)
+         (= (:uri request) \"/test\")
+         (zero? (count (:params request)))))
 
   (access-rule \"/users/:id\" [request]
     (= (:id (:route-params request)) \"foo\"))
