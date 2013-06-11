@@ -43,20 +43,20 @@
 
   The rule must return a boolean value to indicate whether
   the rule passes, eg:
-  (access-rule \"/test\" [request]
+  (access-rule \"/test\" request
     (and (= (:request-method request) :get)
          (= (:uri request) \"/test\")
          (zero? (count (:params request)))))
 
-  (access-rule \"/users/:id\" [request]
+  (access-rule \"/users/:id\" request
     (= (:id (:route-params request)) \"foo\"))
 
   The above rule will only be checked for urls matching \"/users/:id\"
   and succeed if :id is equal to \"foo\"
  "
- [target-uri fn-params & body]
- `(fn ~fn-params
-    (or (nil? (clout.core/route-matches ~target-uri (first ~fn-params)))
+ [target-uri request & body]
+ `(fn [~request]
+    (or (nil? (clout.core/route-matches ~target-uri ~request))
         (do ~@body))))
 
 (defmacro def-restricted-routes
