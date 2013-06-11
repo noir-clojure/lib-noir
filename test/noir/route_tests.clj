@@ -1,29 +1,34 @@
 (ns noir.route-tests
   (:use clojure.test noir.util.route))
 
-(defn method [url params body] body)
-(defn r1 [m url params] true)
-(defn r2 [m url params] false)
+(defn r1 [req] true)
+(defn r2 [req] false)
 
-(deftest test-redirect 
-  (binding [noir.request/*request* {:access-rules [[{:redirect "/bar"} r2 r2]]}]
-    (is (= {:status 302, :headers {"Location" "/bar"}, :body ""} 
-           (restricted method "/restricted" nil "foo")))))
+(deftest test-simple-redirect
+  (is (= {:status 302, :headers {"Location" "/"}, :body ""} 
+         ((restricted "I shouldn't be here!")
+           {:access-rules [{:rules [r2]}]}))))
 
-(deftest test-pass 
-  (binding [noir.request/*request* {:access-rules [[{:redirect "/bar"} r1 r2]]}]
-    (is (= "foo" (restricted method "/restricted" nil "foo")))))
+(deftest test-redirect
+  (is (= {:status 302, :headers {"Location" "/bar"}, :body ""} 
+         ((restricted "I shouldn't be here!")
+           {:access-rules [{:redirect "/bar"
+                            :rules [r2 r2]}]}))))
 
+(deftest test-pass
+  (is (= "I should be here!"
+         ((restricted "I should be here!")
+           {:access-rules [{:redirect "/bar" :rules [r1 r2]}]}))))
 
-(deftest test-multiple-rule-sets 
-  (binding [noir.request/*request* {:access-rules [[{:redirect "/foo"} r1]
-                                                   [{:redirect "/bar"} r2]
-                                                   [{:redirect "/baz"} r1 r2]]}]
-    (is (= {:status 302, :headers {"Location" "/bar"}, :body ""} 
-           (restricted method "/restricted" nil "foo"))))
+(deftest test-multiple-rule-sets
+  (is (= {:status 302, :headers {"Location" "/bar"}, :body ""} 
+         ((restricted "I shouldn't be here!")
+           {:access-rules [{:redirect "/foo" :rules [r1]}
+                           {:redirect "/bar" :rules [r2]}
+                           {:redirect "/baz" :rules [r1 r2]}]})))
   
-  (binding [noir.request/*request* {:access-rules [[{:redirect "/foo"} r1]
-                                                   [{:redirect "/bar"} r1 r2]
-                                                   [{:redirect "/baz"} r1 r2]]}]
-    (is (= "foo" 
-           (restricted method "/restricted" nil "foo")))))
+  (is (= "I should be here!"
+         ((restricted "I should be here!")
+           {:access-rules [{:redirect "/foo" :rules [r1]}
+                           {:redirect "/bar" :rules [r1 r2]}
+                           {:redirect "/baz" :rules [r1 r2]}]}))))
