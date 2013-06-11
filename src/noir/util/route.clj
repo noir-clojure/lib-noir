@@ -4,18 +4,26 @@
         [noir.response :only [redirect]]))
 
 (defn ^{:skip-wiki true} check-rules
-  [request {:keys [redirect rules]}]  
- (let [redirect-target (or redirect "/")]   
+  [request {:keys [redirect rules]}]
+ (let [redirect-target (or redirect "/")]
    (or (boolean
          (or (empty? rules)
              (some #(% request) rules)))
        (noir.response/redirect
          (if (fn? redirect-target) (redirect-target request) redirect-target)))))
 
+(defn ^{:skip-wiki true} match-rules
+  [req rules]
+  (filter (fn [{:keys [uri]}]
+            (or (nil? uri) (route-matches uri req)))
+          rules))
+
 (defn ^{:skip-wiki true} wrap-restricted [handler]
-     (fn [request]       
+     (fn [request]
        (let [rules   (:access-rules request)
-             results (map (partial check-rules request) rules)]
+             matching-rules (match-rules request rules)
+             results (map (partial check-rules request) matching-rules)]
+
          (or (first (filter #(:status %) results))
              (handler request)))))
 
@@ -23,7 +31,7 @@
   "Checks if any of the rules defined in wrap-access-rules match the request,
    if no rules match then the response is a redirect to the location specified
    by the noir.util.middleware/wrap-access-rules wrapper, eg:
-   
+
    (GET \"/foo\" [] (restricted foo-handler))"
   [& body]
      `(wrap-restricted (fn [args#] ~@body)))

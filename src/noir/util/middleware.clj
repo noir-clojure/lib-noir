@@ -1,13 +1,13 @@
 (ns noir.util.middleware
-  (:use [noir.request :only [*request*]] 
-        [noir.response :only [redirect]]        
+  (:use [noir.request :only [*request*]]
+        [noir.response :only [redirect]]
         [compojure.core :only [routes]]
         [compojure.handler :only [api]]
         [hiccup.middleware :only [wrap-base-url]]
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
-        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]        
-        [ring.middleware.multipart-params :only [wrap-multipart-params]]                
+        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]
+        [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.resource :only [wrap-resource]]
         [ring.middleware.file-info :only [wrap-file-info]])
@@ -78,11 +78,11 @@
    the request and returns a boolean indicating whether it passed or not, eg:
 
    (defn private-pages [req]
-    (and (some #{(:uri req)} [\"/private-page1\" \"/private-page2\"]) 
+    (and (some #{(:uri req)} [\"/private-page1\" \"/private-page2\"])
          (session/get :user)))
 
    by default if none of the rules return true the client will be redirected
-   to /. It's possible to pass a custom redirect target by specifying the 
+   to /. It's possible to pass a custom redirect target by specifying the
    :redirect key pointing to a URI.
 
    The value of the :redirect key can either be a string or a function that
@@ -90,16 +90,25 @@
 
    The rules can be supplied either as a function or a map indicating the
    redirect target and the rules that redirect to that target, eg:
-   
+
    (wrap-access-rules handler some-rule
-                              another-rule                              
+                              another-rule
                               {:redirect \"/unauthorized\"
                                :rules [rule3 rule4]}
                               {:redirect (fn [req] (println \\\"redirecting\\\")
                                            \\\"/unauthorized\\\")
                                :rules [rule5]})
-   
-   the first set of rules that fails will cause a redirect to its redirect target"
+
+   the first set of rules that fails will cause a redirect to its redirect target.
+
+   It is also posible to restrict access rules to only active for specific URI patterns:
+
+   (wrap-access-rules handler {:redirect \"/unauthorized\"
+                               :uri "\"/users/*\""
+                               :rules [rule1 rule2]}})
+
+   above, rule1 and rule2 will only be activated for URIs that start with /users/"
+   "
   [handler rules]
   (if (empty? rules)
     handler
@@ -132,18 +141,18 @@
                   :access-rules [rule1
                                  rule2
                                  {:redirect \"/unauthorized1\"
-                                  :rules [rule3 rule4]}]"   
-  [app-routes & {:keys [store multipart middleware access-rules]}]  
+                                  :rules [rule3 rule4]}]"
+  [app-routes & {:keys [store multipart middleware access-rules]}]
   (-> (apply routes app-routes)
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
       (wrap-middleware middleware)
-      (wrap-access-rules access-rules)      
+      (wrap-access-rules access-rules)
       (wrap-noir-validation)
       (wrap-noir-cookies)
       (wrap-noir-flash)
-      (wrap-noir-session 
+      (wrap-noir-session
         {:store (or store (memory-store mem))})))
 
 (defn war-handler
