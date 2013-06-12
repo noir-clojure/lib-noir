@@ -23,9 +23,9 @@
        (let [rules   (:access-rules request)
              matching-rules (match-rules request rules)
              results (map (partial check-rules request) matching-rules)]
-
-         (or (first (filter #(:status %) results))
-             (handler request)))))
+         (if (or (empty? results) (some #{true} results))
+          (handler request)
+          (first results)))))
 
 (defmacro restricted
   "Checks if any of the rules defined in wrap-access-rules match the request,
@@ -35,29 +35,6 @@
    (GET \"/foo\" [] (restricted foo-handler))"
   [& body]
      `(wrap-restricted (fn [args#] ~@body)))
-
-(defmacro access-rule
- "Creates an access rule for the given url pattern.
-  The second argument must be a vector with a single
-  item representing the request.
-
-  The rule must return a boolean value to indicate whether
-  the rule passes, eg:
-  (access-rule \"/test\" request
-    (and (= (:request-method request) :get)
-         (= (:uri request) \"/test\")
-         (zero? (count (:params request)))))
-
-  (access-rule \"/users/:id\" request
-    (= (:id (:route-params request)) \"foo\"))
-
-  The above rule will only be checked for urls matching \"/users/:id\"
-  and succeed if :id is equal to \"foo\"
- "
- [target-uri request & body]
- `(fn [~request]
-    (or (nil? (clout.core/route-matches ~target-uri ~request))
-        (do ~@body))))
 
 (defmacro def-restricted-routes
   "accepts a name and one or more routes, prepends restricted to all

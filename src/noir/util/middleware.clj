@@ -91,21 +91,21 @@
    The rules can be supplied either as a function or a map indicating the
    redirect target and the rules that redirect to that target, eg:
 
-   (wrap-access-rules handler some-rule
+   (wrap-access-rules handler [some-rule
                               another-rule
                               {:redirect \"/unauthorized\"
                                :rules [rule3 rule4]}
                               {:redirect (fn [req] (println \\\"redirecting\\\")
                                            \\\"/unauthorized\\\")
-                               :rules [rule5]})
+                               :rules [rule5]}])
 
    the first set of rules that fails will cause a redirect to its redirect target.
 
    It is also posible to restrict access rules to only active for specific URI patterns:
 
-   (wrap-access-rules handler {:redirect \"/unauthorized\"
+   (wrap-access-rules handler [{:redirect \"/unauthorized\"
                                :uri \"/users/*\"
-                               :rules [rule1 rule2]}})
+                               :rules [rule1 rule2]}])
 
    above, rule1 and rule2 will only be activated for URIs that start with /users/
    "
@@ -113,11 +113,13 @@
   (if (empty? rules)
     handler
     (let [{mapped-rules true
-           unmapped-rules false} (group-by map? rules)
-          rule-set (conj mapped-rules {:redirect "/" :rules unmapped-rules})]
+           unmapped-rules false} (group-by map? rules)]
       (fn [req]
         (handler
-          (assoc req :access-rules rule-set))))))
+          (assoc req :access-rules
+            (if (not-empty unmapped-rules)
+                  (conj mapped-rules {:redirect "/" :rules unmapped-rules})
+                  mapped-rules)))))))
 
 (defn- wrap-middleware [routes [wrapper & more]]
   (if wrapper (recur (wrapper routes) more) routes))
