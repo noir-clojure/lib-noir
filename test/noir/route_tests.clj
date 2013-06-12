@@ -21,18 +21,15 @@
            {:access-rules [{:redirect "/bar" :rules [r1 r2]}]}))))
 
 (deftest test-multiple-rule-sets
-  (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
+  (is (= {:status 302, :headers {"Location" "/"}, :body ""}
          ((restricted "I shouldn't be here!")
-           {:access-rules [{:redirect "/foo" :rules [r1]}
-                           {:redirect "/bar" :rules [r2]}
-                           {:redirect "/baz" :rules [r1 r2]}]})))
+           {:uri "/bar"
+            :access-rules [{:uri "/foo" :rules [r1]}
+                           {:uri "/bar" :rules [r2]}
+                           {:uri "/baz" :rules [r1 r2]}]})))
 
   (is (= "I should be here!"
          ((restricted "I should be here!")
            {:access-rules [{:redirect "/foo" :rules [r1]}
                            {:redirect "/bar" :rules [r1 r2]}
                            {:redirect "/baz" :rules [r1 r2]}]}))))
-
-(deftest access-rule-test
-  (is (= "success"
-         ((access-rule "/foo/*" req "success") {:uri "/foo/bar"}))))
