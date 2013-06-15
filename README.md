@@ -31,6 +31,10 @@ You want to use [Leiningen](https://github.com/technomancy/leiningen), of course
 [lib-noir "0.6.2"]
 ```
 
+## Breaking changes in 0.6.2
+
+The access rule handling has been changed in 0.6.2, please see [documentation](http://www.luminusweb.net/docs/routes.md#restricting_access) for details
+
 ## Credits
 
 A lot of these libraries were originally written by
