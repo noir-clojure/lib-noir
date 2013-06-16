@@ -1,35 +1,43 @@
 (ns noir.route-tests
   (:use clojure.test noir.util.route))
 
-(defn r1 [req] true)
-(defn r2 [req] false)
+(defn allow [req] true)
+(defn deny [req] false)
 
 (deftest test-simple-redirect
   (is (= {:status 302, :headers {"Location" "/"}, :body ""}
          ((restricted "I shouldn't be here!")
-           {:access-rules [{:rules [r2]}]}))))
+           {:access-rules [{:rules [deny]}]}))))
 
 (deftest test-redirect
   (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
          ((restricted "I shouldn't be here!")
            {:access-rules [{:redirect "/bar"
-                            :rules [r2 r2]}]}))))
+                            :rules [deny deny]}]}))))
 
 (deftest test-pass
   (is (= "I should be here!"
          ((restricted "I should be here!")
-           {:access-rules [{:redirect "/bar" :rules [r1 r2]}]}))))
+           {:access-rules [{:redirect "/bar" :rules [allow deny]}]}))))
 
 (deftest test-multiple-rule-sets
   (is (= {:status 302, :headers {"Location" "/"}, :body ""}
          ((restricted "I shouldn't be here!")
            {:uri "/bar"
-            :access-rules [{:uri "/foo" :rules [r1]}
-                           {:uri "/bar" :rules [r2]}
-                           {:uri "/baz" :rules [r1 r2]}]})))
+            :access-rules [{:uri "/foo" :rules [allow]}
+                           {:uri "/bar" :rules [deny]}
+                           {:uri "/baz" :rules [allow deny]}]})))
+
+  (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
+         ((restricted "I shouldn't be here!")
+           {:uri "/foo/x"
+           :access-rules [{:uri "/foo*" :rules [allow]}
+                          {:uri "/foo/x" :rules [deny] :redirect "/bar"}
+                          {:uri "/foo/x" :rules [deny] :redirect "/baz"}
+                          {:uri "/foo/y" :rules [deny deny] :redirect "/qux"}]})))
 
   (is (= "I should be here!"
          ((restricted "I should be here!")
-           {:access-rules [{:redirect "/foo" :rules [r1]}
-                           {:redirect "/bar" :rules [r1 r2]}
-                           {:redirect "/baz" :rules [r1 r2]}]}))))
+           {:access-rules [{:redirect "/foo" :rules [allow]}
+                           {:redirect "/bar" :rules [allow deny]}
+                           {:redirect "/baz" :rules [allow deny]}]}))))
