@@ -18,7 +18,7 @@
 (deftest test-pass
   (is (= "I should be here!"
          ((restricted "I should be here!")
-           {:access-rules [{:redirect "/bar" :rules [allow deny]}]}))))
+           {:access-rules [{:redirect "/bar" :rules [allow]}]}))))
 
 (deftest test-multiple-rule-sets
   (is (= {:status 302, :headers {"Location" "/"}, :body ""}
@@ -28,16 +28,15 @@
                            {:uri "/bar" :rules [deny]}
                            {:uri "/baz" :rules [allow deny]}]})))
 
+   (is (= {:status 302, :headers {"Location" "/"}, :body ""}
+          ((restricted "I shouldn't be here!")
+            {:uri "/baz"
+             :access-rules [{:uri "/baz" :rules [allow deny]}]})))
+
   (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
          ((restricted "I shouldn't be here!")
            {:uri "/foo/x"
            :access-rules [{:uri "/foo*" :rules [allow]}
                           {:uri "/foo/x" :rules [deny] :redirect "/bar"}
                           {:uri "/foo/x" :rules [deny] :redirect "/baz"}
-                          {:uri "/foo/y" :rules [deny deny] :redirect "/qux"}]})))
-
-  (is (= "I should be here!"
-         ((restricted "I should be here!")
-           {:access-rules [{:redirect "/foo" :rules [allow]}
-                           {:redirect "/bar" :rules [allow deny]}
-                           {:redirect "/baz" :rules [allow deny]}]}))))
+                          {:uri "/foo/y" :rules [deny deny] :redirect "/qux"}]}))))

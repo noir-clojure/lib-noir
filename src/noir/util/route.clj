@@ -8,7 +8,7 @@
  (let [redirect-target (or redirect "/")]
    (or (boolean
          (or (empty? rules)
-             (some #(% request) rules)))
+             (every? #(% request) rules)))
        (noir.response/redirect
          (if (fn? redirect-target) (redirect-target request) redirect-target)))))
 
