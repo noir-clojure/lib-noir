@@ -92,12 +92,12 @@
    redirect target and the rules that redirect to that target, eg:
 
    (wrap-access-rules handler [some-rule
-                              another-rule
-                              {:redirect \"/unauthorized\"
-                               :rules [rule3 rule4]}
-                              {:redirect (fn [req] (println \\\"redirecting\\\")
-                                           \\\"/unauthorized\\\")
-                               :rules [rule5]}])
+                               another-rule
+                               {:redirect \"/unauthorized\"
+                                :rules [rule3 rule4]}
+                               {:redirect (fn [req] (println \"redirecting\")
+                                            \"/unauthorized\")
+                                :rule rule5}])
 
    the first set of rules that fails will cause a redirect to its redirect target.
 
@@ -107,6 +107,9 @@
                                :uri \"/users/*\"
                                :rules [rule1 rule2]}])
 
+   (wrap-access-rules handler [{:redirect \"/unauthorized\"
+                               :uris [\"/users/*\" \"/private\"]
+                               :rules [rule1 rule2]}])
    above, rule1 and rule2 will only be activated for URIs that start with /users/
    "
   [handler rules]
