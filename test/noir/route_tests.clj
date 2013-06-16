@@ -12,8 +12,7 @@
 (deftest test-redirect
   (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
          ((restricted "I shouldn't be here!")
-           {:access-rules [{:redirect "/bar"
-                            :rules [deny deny]}]}))))
+           {:access-rules [{:redirect "/bar" :rules [deny]}]}))))
 
 (deftest test-pass
   (is (= "I should be here!"
@@ -39,4 +38,4 @@
            :access-rules [{:uri "/foo*" :rules [allow]}
                           {:uri "/foo/x" :rules [deny] :redirect "/bar"}
                           {:uri "/foo/x" :rules [deny] :redirect "/baz"}
-                          {:uri "/foo/y" :rules [deny deny] :redirect "/qux"}]}))))
+                          {:uri "/foo/y" :rules [allow] :redirect "/qux"}]}))))
