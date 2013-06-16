@@ -4,18 +4,21 @@
         [noir.response :only [redirect]]))
 
 (defn ^{:skip-wiki true} check-rules
-  [request {:keys [redirect rules]}]
- (let [redirect-target (or redirect "/")]
+  [request {:keys [redirect rules rule match-all]}]
+ (let [redirect-target (or redirect "/")
+       rules           (or rules [rule])]
    (or (boolean
          (or (empty? rules)
-             (some #(% request) rules)))
+             ((if match-all every? some) #(% request) rules)))
        (noir.response/redirect
          (if (fn? redirect-target) (redirect-target request) redirect-target)))))
 
 (defn ^{:skip-wiki true} match-rules
   [req rules]
-  (filter (fn [{:keys [uri]}]
-            (or (nil? uri) (route-matches uri req)))
+  (filter (fn [{:keys [uri uris]}]
+            (or (and (nil? uri) (nil? uris))
+                (and uri (route-matches uri req))
+                (and uris (some #(route-matches % req) uris))))
           rules))
 
 (defn ^{:skip-wiki true} wrap-restricted [handler]
