@@ -24,7 +24,7 @@
   (filter (fn [{:keys [uri uris]}]
             (or (and (nil? uri) (nil? uris))
                 (and uri (route-matches uri req))
-                (and uris (every? #(route-matches % req) uris))))
+                (and uris (some #(route-matches % req) uris))))
           rules))
 
 (defn ^{:skip-wiki true} wrap-restricted [handler]
