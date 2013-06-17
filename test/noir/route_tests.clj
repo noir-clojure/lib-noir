@@ -35,6 +35,12 @@
                           {:uri "/foo/x" :rules [deny] :redirect "/baz"}
                           {:uri "/foo/y" :rules [deny deny] :redirect "/qux"}]})))
 
+  (is (= {:status 302, :headers {"Location" "/baz"}, :body ""}
+         ((restricted "I shouldn't be here!")
+           {:uri "/bar"
+            :access-rules [{:uris ["/foo" "/bar"] :rule deny :redirect "/baz"}
+                           {:uri "/bar" :rule allow :redirect "/qux"}]})))
+
   (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
          ((restricted "I shouldn't be here!")
            {:access-rules [{:redirect "/bar" :rules {:every [allow deny]}}]})))
