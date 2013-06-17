@@ -7,7 +7,7 @@
   (if (map? rules)
     (let [{:keys [any every]} rules]
       (and (some #(% request) any) (every? #(% request) every)))
-    (some #(% request) rules)))
+    (every? #(% request) rules)))
 
 (defn ^{:skip-wiki true} check-rules
   [request {:keys [on-fail redirect rules rule]}]
@@ -29,12 +29,12 @@
 
 (defn ^{:skip-wiki true} wrap-restricted [handler]
      (fn [request]
-       (let [rules   (:access-rules request)
+       (let [rules (:access-rules request)
              matching-rules (match-rules request rules)
              results (map (partial check-rules request) matching-rules)]
-         (if (or (empty? results) (some #{true} results))
+         (if (or (empty? results) (every? #{true} results))
           (handler request)
-          (first results)))))
+           (first (remove #{true} results))))))
 
 (defmacro restricted
   "Checks if any of the rules defined in wrap-access-rules match the request,
