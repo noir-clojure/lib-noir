@@ -110,7 +110,16 @@
    (wrap-access-rules handler [{:redirect \"/unauthorized\"
                                 :uris [\"/users/*\" \"/private\"]
                                 :rules [rule1 rule2]}])
+
    above, rule1 and rule2 will only be activated for URIs that start with /users/
+   
+   it's also possible to specify :on-fail function to handle the failure as an
+   alternative to a redirect:
+
+   (wrap-access-rules handler [{:on-fail (fn [req] \"access to denied!\")
+                                :uri \"/users/*\"
+                                :rules [rule1 rule2]}])
+
    "
   [handler rules]
   (if (empty? rules)
