@@ -3,13 +3,17 @@
         [noir.request :only [*request*]]
         [noir.response :only [redirect]]))
 
+(defn ^{:skip-wiki true} apply-rules [request rules]
+  (if (map? rules)
+    (let [{:keys [any every]} rules]
+      (and (some #(% request) any) (every? #(% request) every)))
+    (some #(% request) rules)))
+
 (defn ^{:skip-wiki true} check-rules
-  [request {:keys [redirect rules rule match-all]}]
+  [request {:keys [redirect rules rule]}]
  (let [redirect-target (or redirect "/")
        rules           (or rules [rule])]
-   (or (boolean
-         (or (empty? rules)
-             ((if match-all every? some) #(% request) rules)))
+   (or (boolean (or (empty? rules) (apply-rules request rules)))
        (noir.response/redirect
          (if (fn? redirect-target) (redirect-target request) redirect-target)))))
 

@@ -35,6 +35,12 @@
                            {:redirect "/baz" :rules [allow deny]}]})))
   
   (is (= {:status 302, :headers {"Location" "/bar"}, :body ""}
+         ((restricted "I shouldn't be here!")
+           {:access-rules [{:redirect "/bar" :rules {:every [allow deny]}}]})))
+  (is (= "I should be here!"
          ((restricted "I should be here!")
-           {:access-rules [{:redirect "/bar" :rules [allow deny]
-                            :match-all true}]}))))
+           {:access-rules [{:redirect "/bar" :rules {:any [allow deny]}}]})))
+  (is (= "I should be here!"
+         ((restricted "I should be here!")
+           {:access-rules [{:redirect "/bar" :rules {:every [allow allow]
+                                                     :any [allow deny]}}]}))))
