@@ -10,12 +10,14 @@
     (some #(% request) rules)))
 
 (defn ^{:skip-wiki true} check-rules
-  [request {:keys [redirect rules rule]}]
+  [request {:keys [on-fail redirect rules rule]}]
  (let [redirect-target (or redirect "/")
        rules           (or rules [rule])]
    (or (boolean (or (empty? rules) (apply-rules request rules)))
-       (noir.response/redirect
-         (if (fn? redirect-target) (redirect-target request) redirect-target)))))
+       (if on-fail
+         (on-fail request)
+         (noir.response/redirect
+           (if (fn? redirect-target) (redirect-target request) redirect-target))))))
 
 (defn ^{:skip-wiki true} match-rules
   [req rules]
