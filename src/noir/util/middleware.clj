@@ -101,7 +101,7 @@
 
    the first set of rules that fails will cause a redirect to its redirect target.
 
-   It is also posible to restrict access rules to only active for specific URI patterns:
+   To restrict access rules to only active for specific URI patterns use the :uri key:
 
    (wrap-access-rules handler [{:redirect \"/unauthorized\"
                                 :uri \"/users/*\"
@@ -110,16 +110,23 @@
    (wrap-access-rules handler [{:redirect \"/unauthorized\"
                                 :uris [\"/users/*\" \"/private\"]
                                 :rules [rule1 rule2]}])
-
-   above, rule1 and rule2 will only be activated for URIs that start with /users/
    
-   it's also possible to specify :on-fail function to handle the failure as an
+   Above, rule1 and rule2 will only be activated for URIs that start with /users/.
+   
+   It's also possible to specify :on-fail function to handle the failure as an
    alternative to a redirect:
 
    (wrap-access-rules handler [{:on-fail (fn [req] \"access to denied!\")
                                 :uri \"/users/*\"
                                 :rules [rule1 rule2]}])
 
+   By default any of the rules have to match for the rule group to succeed.
+   It's possible to use :any and :every keys to change the resolution behavior:
+   
+   (wrap-access-rules handler [{:rules {:every [rule1 rule2]}}])
+   (wrap-access-rules handler [{:rules {:any [rule1 rule2]}}])
+   (wrap-access-rules handler [{:rules {:every [rule1 rule2]
+                                        :any   [rule3 rule4]}}])
    "
   [handler rules]
   (if (empty? rules)
