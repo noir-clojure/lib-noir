@@ -3,19 +3,28 @@
         [noir.request :only [*request*]]
         [noir.response :only [redirect]]))
 
+(defn ^{:skip-wiki true} apply-rules [request rules]
+  (if (map? rules)
+    (let [{:keys [any every]} rules]
+      (and (some #(% request) any) (every? #(% request) every)))
+    (some #(% request) rules)))
+
 (defn ^{:skip-wiki true} check-rules
-  [request {:keys [redirect rules]}]
- (let [redirect-target (or redirect "/")]
-   (or (boolean
-         (or (empty? rules)
-             (every? #(% request) rules)))
-       (noir.response/redirect
-         (if (fn? redirect-target) (redirect-target request) redirect-target)))))
+  [request {:keys [on-fail redirect rules rule]}]
+ (let [redirect-target (or redirect "/")
+       rules           (or rules [rule])]
+   (or (boolean (or (empty? rules) (apply-rules request rules)))
+       (if on-fail
+         (on-fail request)
+         (noir.response/redirect
+           (if (fn? redirect-target) (redirect-target request) redirect-target))))))
 
 (defn ^{:skip-wiki true} match-rules
   [req rules]
-  (filter (fn [{:keys [uri]}]
-            (or (nil? uri) (route-matches uri req)))
+  (filter (fn [{:keys [uri uris]}]
+            (or (and (nil? uri) (nil? uris))
+                (and uri (route-matches uri req))
+                (and uris (some #(route-matches % req) uris))))
           rules))
 
 (defn ^{:skip-wiki true} wrap-restricted [handler]
@@ -23,9 +32,9 @@
        (let [rules   (:access-rules request)
              matching-rules (match-rules request rules)
              results (map (partial check-rules request) matching-rules)]
-         (if (or (empty? results) (every? #{true} results))
+         (if (or (empty? results) (some #{true} results))
           (handler request)
-          (first (remove #{true} results))))))
+          (first results)))))
 
 (defmacro restricted
   "Checks if any of the rules defined in wrap-access-rules match the request,
