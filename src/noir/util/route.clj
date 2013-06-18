@@ -20,7 +20,7 @@
            (if (fn? redirect-target) (redirect-target request) redirect-target))))))
 
 (defn ^{:skip-wiki true} match-rules
-  [{:keys [uri] :as req} rules]
+  [{:keys [uri]} rules]
   (let [route {:uri uri}]
     (filter (fn [{:keys [uri uris]}]
               (or (and (nil? uri) (nil? uris))
