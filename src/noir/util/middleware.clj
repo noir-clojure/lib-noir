@@ -77,56 +77,50 @@
   "wraps the handler with the supplied access rules, each rule accepts
    the request and returns a boolean indicating whether it passed or not, eg:
 
-   (defn private-pages [req]
-    (and (some #{(:uri req)} [\"/private-page1\" \"/private-page2\"])
-         (session/get :user)))
-
-   by default if none of the rules return true the client will be redirected
-   to /. It's possible to pass a custom redirect target by specifying the
-   :redirect key pointing to a URI.
-
-   The value of the :redirect key can either be a string or a function that
-   takes the request as its argument.
-
-   The rules can be supplied either as a function or a map indicating the
-   redirect target and the rules that redirect to that target, eg:
-
-   (wrap-access-rules handler [some-rule
-                               another-rule
-                               {:redirect \"/unauthorized\"
-                                :rules [rule3 rule4]}
-                               {:redirect (fn [req] (println \"redirecting\")
-                                            \"/unauthorized\")
-                                :rule rule5}])
-
-   the first set of rules that fails will cause a redirect to its redirect target.
-
-   To restrict access rules to only active for specific URI patterns use the :uri key:
-
-   (wrap-access-rules handler [{:redirect \"/unauthorized\"
-                                :uri \"/users/*\"
-                                :rules [rule1 rule2]}])
-
-   (wrap-access-rules handler [{:redirect \"/unauthorized\"
-                                :uris [\"/users/*\" \"/private\"]
-                                :rules [rule1 rule2]}])
+   (defn user-access [req]
+    (session/get :user))
    
-   Above, rule1 and rule2 will only be activated for URIs that start with /users/.
-   
-   It's also possible to specify :on-fail function to handle the failure as an
-   alternative to a redirect:
+   (defn admin-access [req]
+    (session/get :admin))
 
-   (wrap-access-rules handler [{:on-fail (fn [req] \"access to denied!\")
-                                :uri \"/users/*\"
-                                :rules [rule1 rule2]}])
+   (wrap-access-rules handler [user-access])
 
-   By default any of the rules have to match for the rule group to succeed.
-   It's possible to use :any and :every keys to change the resolution behavior:
+   Each rule can either be a function or a map. When a rule is a function, then
+   it redirects to \"/\" and will be checked for each restricted route.
+
+   When specifying rules as a map you can provide further directives using the
+   following keys:
+
+   :uri - the URI pattern to which the rules apply (optional, defaults to any URI)
+   :uris - alternative to :uri, allows specifying a collection of URIs (optional)
+   :redirect - the redirect target for the rules (optional defaults to \"/\")
+   :on-fail - alternative to redirect, allows specifying a handler function for
+              handling the failure, the function must accept the request as a
+              parameter (optional)
+   :rule - a single rule (either :rule or :rules is required)
+   :rules - alternative to rule, allows specifying a list of rules
+
+   The :rules can be specified in any of the following ways:
+  
+   :rules [rule1 rule2]
+   :rules {:any [rule1 rule2]}
+   :rules {:every [rule1 rule2] :any [rule3 rule4]}            
+
+   By default every rule has to pass, the :any key specifies that it's sufficient for
+   any of the rules to pass. 
+
    
-   (wrap-access-rules handler [{:rules {:every [rule1 rule2]}}])
-   (wrap-access-rules handler [{:rules {:any [rule1 rule2]}}])
-   (wrap-access-rules handler [{:rules {:every [rule1 rule2]
-                                        :any   [rule3 rule4]}}])
+   (wrap-access-rules handler [{:redirect \"/access-denied\"
+                                :rule private-pages}])
+
+   (wrap-access-rules handler [{:uri \"/user/*\" :rule user-access}])
+
+   (wrap-access-rules handler [{:uri \"/admin/*\" :rule admin-access}
+                               {:uri \"/user/*\" 
+                                :rules {:any [user-access admin-access]}])
+
+   (wrap-access-rules handler [{:on-fail (fn [req] \"access restricted\")
+                                :rule user-access}])   
    "
   [handler rules]
   (if (empty? rules)
