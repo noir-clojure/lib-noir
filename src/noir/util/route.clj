@@ -20,12 +20,13 @@
            (if (fn? redirect-target) (redirect-target request) redirect-target))))))
 
 (defn ^{:skip-wiki true} match-rules
-  [req rules]
-  (filter (fn [{:keys [uri uris]}]
-            (or (and (nil? uri) (nil? uris))
-                (and uri (route-matches uri req))
-                (and uris (some #(route-matches % req) uris))))
-          rules))
+  [{:keys [uri] :as req} rules]
+  (let [route {:uri uri}]
+    (filter (fn [{:keys [uri uris]}]
+              (or (and (nil? uri) (nil? uris))
+                  (and uri (route-matches uri route))
+                  (and uris (some #(route-matches % route) uris))))
+            rules)))
 
 (defn ^{:skip-wiki true} wrap-restricted [handler]
      (fn [request]
