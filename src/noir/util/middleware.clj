@@ -74,15 +74,19 @@
     (handler (update-in request [:uri] s/replace #"(?<=.)/$" ""))))
 
 (defn wrap-access-rules
-  "wraps the handler with the supplied access rules, each rule accepts
-   the request and returns a boolean indicating whether it passed or not, eg:
+  "wraps the handler with the supplied access rules.
+  
+   Use the noir.util.route/restricted macro to wrap any routes
+   that you wish the access rules to apply to, eg:
+   
+   (GET \"/user/profile\" [] (restricted \"this route is private\"))
+  
+   Each rule accepts the request and returns a boolean indicating whether it
+   passed or not, eg:
 
    (defn user-access [req]
     (session/get :user))
-   
-   (defn admin-access [req]
-    (session/get :admin))
-
+      
    (wrap-access-rules handler [user-access])
 
    Each rule can either be a function or a map. When a rule is a function, then
@@ -108,10 +112,12 @@
 
    By default every rule has to pass, the :any key specifies that it's sufficient for
    any of the rules to pass. 
-
+   
+   (defn admin-access [req]
+    (session/get :admin))
    
    (wrap-access-rules handler [{:redirect \"/access-denied\"
-                                :rule private-pages}])
+                                :rule user-access}])
 
    (wrap-access-rules handler [{:uri \"/user/*\" :rule user-access}])
 
