@@ -10,6 +10,7 @@
                  [compojure "1.1.5"]
                  [clout "1.1.0"]
                  [hiccup "1.0.3"]
+                 [org.clojure/core.cache "0.6.3"]
                  [org.mindrot/jbcrypt "0.3m"]]
   :plugins [[codox "0.6.4"]]
   :codox {:output-dir "doc"})
