@@ -34,20 +34,22 @@
   [id content]
   `(let [timeout#    (get-in @noir.util.cache/cached [:options :timeout])
          max-size#   (get-in @noir.util.cache/cached [:options :size])
-         cur-time#   (.getTime (new java.util.Date))]
-     (if (and max-size# (> (count (:items @noir.util.cache/cached)) max-size#))  
-       (swap! cached update-in [:items]
-              #(->> %
-                   (sort-by :ticks)
-                   (take-last max-size#)
-                   (into {}))))
+         ticks#      (get-in @noir.util.cache/cached [:items ~id :ticks] 0)
+         cur-time#   (.getTime (new java.util.Date))]     
+     (if (and max-size# (>= (count (:items @noir.util.cache/cached)) max-size#))  
+       (swap! noir.util.cache/cached update-in [:items]
+              (fn [items#]
+                (->> items#
+                     (sort-by #(:ticks (second %)))
+                     (take-last max-size#)
+                     (into {})))))
      (-> noir.util.cache/cached
        (swap! update-in [:items ~id]
               (fn [item#]
                 (if (or (not item#)
                         (and timeout# (> (- cur-time# (:time item#)) timeout#)))
                   {:time    cur-time#
-                   :ticks   (inc (get item# :ticks 0))
+                   :ticks   (inc ticks#)
                    :content (or (try ~content (catch Exception ex#))
                                 (:content item#))}
                   (update-in item# [:ticks] inc))))
