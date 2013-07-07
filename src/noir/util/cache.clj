@@ -17,7 +17,7 @@
 (defn set-size!
   "set the maximum size for the cache,
    when the cache grows larger than the
-   size specified oldest items will be 
+   size specified least used items will be 
    removed to make room for new items"
   [items]
   (swap! cached assoc-in [:options :size] items))
@@ -34,21 +34,21 @@
   [id content]
   `(let [timeout#    (get-in @noir.util.cache/cached [:options :timeout])
          max-size#   (get-in @noir.util.cache/cached [:options :size])
-         cached#     (get-in @noir.util.cache/cached [:items ~id])
-         cur-time#   (.getTime (new java.util.Date))]     
-     (if (or (not cached#)
-             (and timeout# (> (- cur-time# (:time cached#)) timeout#)))       
-       (swap! cached update-in [:items ~id] 
-              (fn [cur-content#] 
-                {:content (or (try ~content (catch Exception ex#)) 
-                              (:content cur-content#)) 
-                 :time (.getTime (new java.util.Date))})))     
+         cur-time#   (.getTime (new java.util.Date))]
      (if (and max-size# (> (count (:items @noir.util.cache/cached)) max-size#))  
-       (swap! cached (fn [cache#]
-                       (update-in 
-                         cache# [:items]
-                         #(->> %
-                            (sort-by :time)
-                            (take max-size#)
-                            (into {}))))))
-     (:content (get-in @noir.util.cache/cached [:items ~id]))))
+       (swap! cached update-in [:items]
+              #(->> %
+                   (sort-by :ticks)
+                   (take-last max-size#)
+                   (into {}))))
+     (-> noir.util.cache/cached
+       (swap! update-in [:items ~id]
+              (fn [item#]
+                (if (or (not item#)
+                        (and timeout# (> (- cur-time# (:time item#)) timeout#)))
+                  {:time    cur-time#
+                   :ticks   (inc (get item# :ticks 0))
+                   :content (or (try ~content (catch Exception ex#))
+                                (:content item#))}
+                  (update-in item# [:ticks] inc))))
+       (get-in [:items ~id :content]))))
