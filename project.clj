@@ -6,10 +6,10 @@
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [cheshire "5.2.0"]
-                 [ring "1.1.8"]
+                 [ring "1.2.0"]
                  [compojure "1.1.5"]
                  [clout "1.1.0"]
-                 [hiccup "1.0.3"]
+                 [hiccup "1.0.4"]
                  [org.mindrot/jbcrypt "0.3m"]]
   :plugins [[codox "0.6.4"]]
   :codox {:output-dir "doc"})
