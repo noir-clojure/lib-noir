@@ -51,14 +51,14 @@
    routes and calls Compojure defroutes, eg:
 
    (def-restricted-routes private-pages
-     (GET \"/profile\" [] (show-profile)
-     (GET \"/my-secret-page\" [] (show-secret-page))
+     (GET \"/profile\" [] (show-profile))
+     (GET \"/my-secret-page\" [] (show-secret-page)))
 
    is equivalent to:
 
    (defroutes private-pages
-     (GET \"/profile\" [] (restricted(show-profile))
-     (GET \"/my-secret-page\" [] (restricted (show-secret-page)))"
+     (GET \"/profile\" [] (restricted (show-profile)))
+     (GET \"/my-secret-page\" [] (restricted (show-secret-page))))"
   [name & routes]
   `(compojure.core/defroutes ~name
      ~@(for [[method# uri# params# & body#] routes]
