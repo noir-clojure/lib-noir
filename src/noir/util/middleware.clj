@@ -163,12 +163,12 @@
                   :formats [:json-kw :edn]
 
                   available formats:
-                  :json JSON with string keys in :params and :body-params
-                  :json-kw JSON with keywodized keys in :params and :body-params
-                  :yaml YAML format
-                  :yaml-kw YAML format with keywodized keys in :params and :body-params
-                  :edn edn (native cljure format)
-                  :yaml-in-html yaml in a html page (useful for browser debugging)
+                  :json - JSON with string keys in :params and :body-params
+                  :json-kw - JSON with keywodized keys in :params and :body-params
+                  :yaml - YAML format
+                  :yaml-kw - YAML format with keywodized keys in :params and :body-params
+                  :edn - Clojure format
+                  :yaml-in-html - yaml in a html page (useful for browser debugging)
 
   :access-rules - a vector of access rules you wish to supply,
                   each rule should a function or a rule map as specified in wrap-access-rules, eg:
