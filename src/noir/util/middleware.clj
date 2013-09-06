@@ -6,11 +6,12 @@
         [hiccup.middleware :only [wrap-base-url]]
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
-        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]
+        [noir.session :only [wrap-noir-session wrap-noir-flash]]
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.resource :only [wrap-resource]]
-        [ring.middleware.file-info :only [wrap-file-info]])
+        [ring.middleware.file-info :only [wrap-file-info]]
+        [ring.middleware.format :refer [wrap-restful-format]])
   (:require [clojure.string :as s]))
 
 (defn wrap-if [handler pred wrapper & args]
@@ -153,9 +154,22 @@
   - wrap-noir-flash
   - wrap-noir-session
 
-  :store - optional session store, defaults to memory store
-  :multipart - an optional map of multipart-params middleware options
-  :middleware - a vector of any custom middleware wrappers you wish to supply
+  :store        - optional session store, defaults to memory store
+  :multipart    - an optional map of multipart-params middleware options
+  :middleware   - a vector of any custom middleware wrappers you wish to supply
+  :formats      - optional vector containing formats that should be serialized and
+                  deserialized, eg:
+
+                  :formats [:json-kw :edn]
+
+                  available formats:
+                  :json JSON with string keys in :params and :body-params
+                  :json-kw JSON with keywodized keys in :params and :body-params
+                  :yaml YAML format
+                  :yaml-kw YAML format with keywodized keys in :params and :body-params
+                  :edn edn (native cljure format)
+                  :yaml-in-html yaml in a html page (useful for browser debugging)
+
   :access-rules - a vector of access rules you wish to supply,
                   each rule should a function or a rule map as specified in wrap-access-rules, eg:
 
@@ -163,18 +177,21 @@
                                  rule2
                                  {:redirect \"/unauthorized1\"
                                   :rules [rule3 rule4]}]"
-  [app-routes & {:keys [store multipart middleware access-rules]}]
-  (-> (apply routes app-routes)
-      (wrap-middleware middleware)
-      (wrap-request-map)
-      (api)
-      (with-opts wrap-multipart-params multipart)
-      (wrap-access-rules access-rules)
-      (wrap-noir-validation)
-      (wrap-noir-cookies)
-      (wrap-noir-flash)
-      (wrap-noir-session
-        {:store (or store (memory-store mem))})))
+  [app-routes & {:keys [store multipart middleware access-rules formats]}]
+  (letfn [(wrap-middleware-format [handler]
+            (if formats (wrap-restful-format handler :formats formats) handler))]
+    (-> (apply routes app-routes)
+        (wrap-middleware middleware)
+        (wrap-request-map)
+        (api)
+        (wrap-middleware-format)
+        (with-opts wrap-multipart-params multipart)
+        (wrap-access-rules access-rules)
+        (wrap-noir-validation)
+        (wrap-noir-cookies)
+        (wrap-noir-flash)
+        (wrap-noir-session
+          {:store (or store (memory-store))}))))
 
 (defn war-handler
   "wraps the app-handler in middleware needed for WAR deployment:
