@@ -20,7 +20,7 @@ This library was originally split out from the [Noir](https://github.com/noir-cl
 for your enjoyment.
 
 This library is being actively developed separate from Noir. Nothing in here is specific to Noir and the purpose 
-of it is to be used from any ring-based web framework, such as [Mustache](https://github.com/cgrand/moustache) 
+of it is to be used from any ring-based web framework, such as [Moustache](https://github.com/cgrand/moustache) 
 and [Compojure](https://github.com/weavejester/compojure).
 
 ## Usage
@@ -28,7 +28,7 @@ and [Compojure](https://github.com/weavejester/compojure).
 You want to use [Leiningen](https://github.com/technomancy/leiningen), of course. Add this to your `:dependencies`
 
 ```clojure
-[lib-noir "0.6.6"]
+[lib-noir "0.6.8"]
 ```
 
 ## Breaking changes in 0.6.2

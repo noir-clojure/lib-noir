@@ -165,10 +165,10 @@
                                   :rules [rule3 rule4]}]"
   [app-routes & {:keys [store multipart middleware access-rules]}]
   (-> (apply routes app-routes)
+      (wrap-middleware middleware)
       (wrap-request-map)
       (api)
       (with-opts wrap-multipart-params multipart)
-      (wrap-middleware middleware)
       (wrap-access-rules access-rules)
       (wrap-noir-validation)
       (wrap-noir-cookies)
