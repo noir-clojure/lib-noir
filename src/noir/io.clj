@@ -18,7 +18,7 @@
   [relative-path {:keys [tempfile size filename size]}]  
   (try 
     (with-open [in (new FileInputStream tempfile)
-                out (new FileOutputStream (file-path relative-path filename)]
+                out (new FileOutputStream (file-path relative-path filename))]
       (let [source (.getChannel in)
             dest   (.getChannel out)]
         (.transferFrom dest source 0 (.size source))))))
