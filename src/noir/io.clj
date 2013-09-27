@@ -8,13 +8,17 @@
   (if-let [path (io/resource (str "public" File/separator))]
     (.getPath path)))
 
+(defn- file-path [relative-path filename]
+  (java.net.URLDecoder/decode
+    (str (resource-path) relative-path File/separator filename)
+    "utf-8"))
+
 (defn upload-file
   "uploads a file to the public folder of the application"
   [relative-path {:keys [tempfile size filename size]}]  
   (try 
     (with-open [in (new FileInputStream tempfile)
-                out (new FileOutputStream 
-                         (str (resource-path) relative-path File/separator filename))]
+                out (new FileOutputStream (file-path relative-path filename)]
       (let [source (.getChannel in)
             dest   (.getChannel out)]
         (.transferFrom dest source 0 (.size source))))))
