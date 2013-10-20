@@ -9,8 +9,6 @@
         [noir.session :only [mem wrap-noir-session wrap-noir-flash]]
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [ring.middleware.session.memory :only [memory-store]]
-        [ring.middleware.resource :only [wrap-resource]]
-        [ring.middleware.file-info :only [wrap-file-info]]
         [ring.middleware.format :refer [wrap-restful-format]])
   (:require [clojure.string :as s]))
 
@@ -76,18 +74,18 @@
 
 (defn wrap-access-rules
   "wraps the handler with the supplied access rules.
-  
+
    Use the noir.util.route/restricted macro to wrap any routes
    that you wish the access rules to apply to, eg:
-   
+
    (GET \"/user/profile\" [] (restricted \"this route is private\"))
-  
+
    Each rule accepts the request and returns a boolean indicating whether it
    passed or not, eg:
 
    (defn user-access [req]
     (session/get :user))
-      
+
    (wrap-access-rules handler [user-access])
 
    Each rule can either be a function or a map. When a rule is a function, then
@@ -106,28 +104,28 @@
    :rules - alternative to rule, allows specifying a list of rules
 
    The :rules can be specified in any of the following ways:
-  
+
    :rules [rule1 rule2]
    :rules {:any [rule1 rule2]}
-   :rules {:every [rule1 rule2] :any [rule3 rule4]}            
+   :rules {:every [rule1 rule2] :any [rule3 rule4]}
 
    By default every rule has to pass, the :any key specifies that it's sufficient for
-   any of the rules to pass. 
-   
+   any of the rules to pass.
+
    (defn admin-access [req]
     (session/get :admin))
-   
+
    (wrap-access-rules handler [{:redirect \"/access-denied\"
                                 :rule user-access}])
 
    (wrap-access-rules handler [{:uri \"/user/*\" :rule user-access}])
 
    (wrap-access-rules handler [{:uri \"/admin/*\" :rule admin-access}
-                               {:uri \"/user/*\" 
+                               {:uri \"/user/*\"
                                 :rules {:any [user-access admin-access]}])
 
    (wrap-access-rules handler [{:on-fail (fn [req] \"access restricted\")
-                                :rule user-access}])   
+                                :rule user-access}])
    "
   [handler rules]
   (if (empty? rules)
@@ -184,6 +182,7 @@
         (wrap-middleware middleware)
         (wrap-request-map)
         (api)
+        (wrap-base-url)
         (wrap-middleware-format)
         (with-opts wrap-multipart-params multipart)
         (wrap-access-rules access-rules)
@@ -192,14 +191,3 @@
         (wrap-noir-flash)
         (wrap-noir-session
           {:store (or store (memory-store mem))}))))
-
-(defn war-handler
-  "wraps the app-handler in middleware needed for WAR deployment:
-  - wrap-resource
-  - wrap-file-info
-  - wrap-base-url"
-  [app-handler]
-  (-> app-handler
-      (wrap-resource "public")
-      (wrap-file-info)
-      (wrap-base-url)))
