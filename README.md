@@ -28,7 +28,7 @@ and [Compojure](https://github.com/weavejester/compojure).
 You want to use [Leiningen](https://github.com/technomancy/leiningen), of course. Add this to your `:dependencies`
 
 ```clojure
-[lib-noir "0.7.0"]
+[lib-noir "0.7.3"]
 ```
 
 ## Breaking changes in 0.6.2
