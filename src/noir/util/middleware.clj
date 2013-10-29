@@ -152,13 +152,14 @@
   - wrap-noir-flash
   - wrap-noir-session
 
-  :store        - optional session store, defaults to memory store
-  :multipart    - an optional map of multipart-params middleware options
-  :middleware   - a vector of any custom middleware wrappers you wish to supply
-  :formats      - optional vector containing formats that should be serialized and
-                  deserialized, eg:
+  :session-options - optional map specifying Ring session parameters, eg: {:cookie-attrs {:max-age 1000}}
+  :store           - optional session store, defaults to memory store
+  :multipart       - an optional map of multipart-params middleware options
+  :middleware      - a vector of any custom middleware wrappers you wish to supply
+  :formats         - optional vector containing formats that should be serialized and
+                     deserialized, eg:
 
-                  :formats [:json-kw :edn]
+                     :formats [:json-kw :edn]
 
                   available formats:
                   :json - JSON with string keys in :params and :body-params
@@ -175,7 +176,7 @@
                                  rule2
                                  {:redirect \"/unauthorized1\"
                                   :rules [rule3 rule4]}]"
-  [app-routes & {:keys [store multipart middleware access-rules formats]}]
+  [app-routes & {:keys [session-options store multipart middleware access-rules formats]}]
   (letfn [(wrap-middleware-format [handler]
             (if formats (wrap-restful-format handler :formats formats) handler))]
     (-> (apply routes app-routes)
@@ -190,4 +191,5 @@
         (wrap-noir-cookies)
         (wrap-noir-flash)
         (wrap-noir-session
-          {:store (or store (memory-store mem))}))))
+          (merge session-options
+                 {:store (or store (memory-store mem))})))))
