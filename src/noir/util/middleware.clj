@@ -153,7 +153,7 @@
   - wrap-noir-session
 
   :session-options - optional map specifying Ring session parameters, eg: {:cookie-attrs {:max-age 1000}}
-  :store           - optional session store, defaults to memory store (deprecated: use sesion-options instead!)
+  :store           - deprecated: use sesion-options instead!
   :multipart       - an optional map of multipart-params middleware options
   :middleware      - a vector of any custom middleware wrappers you wish to supply
   :formats         - optional vector containing formats that should be serialized and

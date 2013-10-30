@@ -12,15 +12,15 @@ Some of the core features includes the following:
 * input validation
 * content caching
 * route filtering and redirection
-* password hashing using [jBcrypt](http://www.mindrot.org/projects/jBCrypt/) 
+* password hashing using [jBcrypt](http://www.mindrot.org/projects/jBCrypt/)
 
 See the [API](http://yogthos.github.com/lib-noir/index.html) for more details.
 
 This library was originally split out from the [Noir](https://github.com/noir-clojure/noir) web framework
 for your enjoyment.
 
-This library is being actively developed separate from Noir. Nothing in here is specific to Noir and the purpose 
-of it is to be used from any ring-based web framework, such as [Moustache](https://github.com/cgrand/moustache) 
+This library is being actively developed separate from Noir. Nothing in here is specific to Noir and the purpose
+of it is to be used from any ring-based web framework, such as [Moustache](https://github.com/cgrand/moustache)
 and [Compojure](https://github.com/weavejester/compojure).
 
 ## Usage
@@ -29,6 +29,18 @@ You want to use [Leiningen](https://github.com/technomancy/leiningen), of course
 
 ```clojure
 [lib-noir "0.7.3"]
+```
+
+## Breaking changes in 0.7.4
+
+The `:store` key in `noir.util.middleware/app-handler` has been replaced with the `:session-options` key that allows specifying any Ring session parameters, eg:
+
+```clojure
+(def app
+  (middleware/app-handler
+    [home-routes app-routes]
+    :session-options {:cookie-name "example-app-session"
+                      :store (cookie-store)}))
 ```
 
 ## Breaking changes in 0.6.2
