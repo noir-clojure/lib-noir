@@ -28,7 +28,8 @@
                 out (new FileOutputStream (file-path path filename))]
       (let [source (.getChannel in)
             dest   (.getChannel out)]
-        (.transferFrom dest source 0 (.size source))))))
+        (.transferFrom dest source 0 (.size source))
+        (.flush out)))))
 
 (defn get-resource
   "returns a URL for a resource relative to the public folder of the application
