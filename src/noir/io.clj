@@ -21,7 +21,7 @@
 (defn upload-file
   "uploads a file to the target folder
    when :create-path? flag is set to true then the target path will be created"
-  [path {:keys [tempfile size filename size]} & {:keys [create-path?]}]
+  [path {:keys [tempfile size filename]} & {:keys [create-path?]}]
   (create-path path create-path?)
   (try
     (with-open [in (new FileInputStream tempfile)
