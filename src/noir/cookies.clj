@@ -7,6 +7,11 @@
 (declare ^:dynamic *cur-cookies*)
 (declare ^:dynamic *new-cookies*)
 
+(defn- k->s
+  "Returns the keyword k as a string."
+  [k]
+  (if (string? k) k (subs (str k) 1)))
+
 (defn put!
   "Add a new cookie whose name is k and has the value v. If v is a string
   a cookie map is created with :path '/'. To set custom attributes, such as
@@ -15,7 +20,7 @@
   (let [props (if (map? v)
                 v
                 {:value v :path "/"})]
-    (swap! *new-cookies* assoc (name k) props)))
+    (swap! *new-cookies* assoc (k->s k) props)))
 
 (defn get
   "Get the value of a cookie from the request. k can either be a string or keyword.
@@ -23,7 +28,7 @@
    checked."
   ([k] (get k nil))
   ([k default]
-   (let [str-k (name k)]
+   (let [str-k (k->s k)]
      (if-let [v (or (get-in @*new-cookies* [str-k :value])
                     (get-in *cur-cookies* [str-k :value]))]
        v
@@ -31,7 +36,7 @@
 
 (defn signed-name [k]
   "Construct the name of the signing cookie using a simple suffix."
-  (str (name k) "__s"))
+  (str (k->s k) "__s"))
 
 (defn put-signed!
   "Adds a new cookie whose name is k and has the value v. In addition,
