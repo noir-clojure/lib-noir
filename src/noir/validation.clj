@@ -104,6 +104,9 @@
     (swap! *errors* #(merge-with conj % merge-map))
     nil))
 
+(defn clear-errors []
+  (reset! *errors* {}))
+
 (defn rule
   "If the passed? condition is not met, add the error text to the given field:
   (rule (not-nil? username) [:username \"Usernames must have a value.\"])"
