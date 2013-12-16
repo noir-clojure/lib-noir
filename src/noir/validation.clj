@@ -104,7 +104,9 @@
     (swap! *errors* #(merge-with conj % merge-map))
     nil))
 
-(defn clear-errors []
+(defn clear-errors
+  "removes any errors set via set-error"
+  []
   (reset! *errors* {}))
 
 (defn rule
