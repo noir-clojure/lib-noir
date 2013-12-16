@@ -105,7 +105,7 @@
     nil))
 
 (defn clear-errors
-  "removes any errors set via set-error"
+  "removes any errors that have been previously set."
   []
   (reset! *errors* {}))
 
