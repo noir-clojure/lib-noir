@@ -83,13 +83,14 @@
     *noir-session*
     #(apply (partial update-in % ks f) args)))
 
-(defn ^:private noir-session [handler]
+(defn ^:private noir-session
    "Store noir session keys in a :noir map, because other middleware that
    expects pure functions may delete keys, and simply merging won't work.
    Ring takes (not (contains? response :session) to mean: don't update session.
    Ring takes (nil? (:session resonse) to mean: delete the session.
    Because noir-session mutates :session, it needs to duplicate ring/wrap-session
    functionality to handle these cases."
+  [handler]
   (fn [request]
     (binding [*noir-session* (atom (clojure.core/get-in request [:session :noir] {}))]
       (remove! :_flash)
