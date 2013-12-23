@@ -34,8 +34,9 @@
        v
        default))))
 
-(defn signed-name [k]
+(defn signed-name
   "Construct the name of the signing cookie using a simple suffix."
+  [k]
   (str (k->s k) "__s"))
 
 (defn put-signed!

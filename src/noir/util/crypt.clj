@@ -52,8 +52,9 @@
   [raw encrypted]
   (BCrypt/checkpw raw encrypted))
 
-(defn sha1-sign-hex [sign-key v]
+(defn sha1-sign-hex
   "Using a signing key, compute the sha1 hmac of v and convert to hex."
+  [sign-key v]
   (let [mac (javax.crypto.Mac/getInstance "HmacSHA1")
         secret (javax.crypto.spec.SecretKeySpec. (.getBytes sign-key), "HmacSHA1")]
     (.init mac secret)

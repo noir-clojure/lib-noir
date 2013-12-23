@@ -24,7 +24,7 @@
   (cache! :foo "foo")
   (cache! :bar "bar")
   (cache! :baz "baz")
-  (= [:bar :baz] (->> @cached :items (map keys))))
+  (is (= #{:bar :baz} (->> @cached :items keys set))))
 
 (deftest set-timeout!-test  
   (clear!)
