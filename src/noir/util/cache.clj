@@ -17,7 +17,7 @@
 (defn set-size!
   "set the maximum size for the cache,
    when the cache grows larger than the
-   size specified least used items will be 
+   size specified least used items will be
    removed to make room for new items"
   [items]
   (swap! cached assoc-in [:options :size] items))
@@ -36,13 +36,15 @@
          max-size#   (get-in @noir.util.cache/cached [:options :size])
          cur-item#   (get-in @noir.util.cache/cached [:items ~id])
          cur-time#   (.getTime (new java.util.Date))]
-     (if (and max-size# (> (count (:items @noir.util.cache/cached)) max-size#))
+
+     (if (and max-size# (>= (count (:items @noir.util.cache/cached)) max-size#))
        (swap! noir.util.cache/cached update-in [:items]
               (fn [items#]
                 (->> items#
                      (sort-by #(:ticks (second %)))
-                     (take-last max-size#)
+                     (take-last (if cur-item# max-size# (dec max-size#)))
                      (into {})))))
+
      (-> noir.util.cache/cached
        (swap! update-in [:items ~id]
               (fn [item#]
