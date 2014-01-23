@@ -10,7 +10,7 @@
                  [compojure "1.1.5"]
                  [clout "1.1.0"]
                  [hiccup "1.0.4"]
-                 [ring-middleware-format "0.3.1"]
+                 [ring-middleware-format "0.3.2"]
                  [org.mindrot/jbcrypt "0.3m"]]
   :plugins [[codox "0.6.4"]]
   :codox {:output-dir "doc"})
