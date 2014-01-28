@@ -95,8 +95,9 @@
     (apply concat (vals @*errors*))))
 
 (defn set-error!
-  "Explicitly set an error for the given field. This can be used to
-  create complex error cases, such as in a multi-step login process."
+  "Explicitly set an error in the noir.validation/*errors* atom for
+  the given field. This can be used to create complex error cases,
+  such as in a multi-step login process."
   [field error]
   (let [merge-map (if (get-errors field)
                     {field error}
@@ -111,7 +112,8 @@
   (set-error! field error))
 
 (defn clear-errors!
-  "removes any errors that have been previously set."
+  "removes any errors that have been previously set
+  in the noir.validation/*errors* atom."
   []
   (reset! *errors* {}))
 
