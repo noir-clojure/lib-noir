@@ -94,7 +94,7 @@
     (get @*errors* field)
     (apply concat (vals @*errors*))))
 
-(defn set-error
+(defn set-error!
   "Explicitly set an error for the given field. This can be used to
   create complex error cases, such as in a multi-step login process."
   [field error]
@@ -104,10 +104,21 @@
     (swap! *errors* #(merge-with conj % merge-map))
     nil))
 
-(defn clear-errors
+(defn set-error
+  ^{:doc "Original name for set-error!. Use that instead."
+    :deprecated "0.8.0"}
+  [field error]
+  (set-error! field error))
+
+(defn clear-errors!
   "removes any errors that have been previously set."
   []
   (reset! *errors* {}))
+
+(defn clear-errors
+  ^{:doc "Original name for clear-errors!. Use that instead."
+    :deprecated "0.8.0"}
+  [] (clear-errors))
 
 (defn rule
   "If the passed? condition is not met, add the error text to the given field:
