@@ -51,8 +51,12 @@
   (is (= false
          (validation/is-email? "test")))
   (is (= false
-         (validation/is-email? "test@.net"))))
-         
+         (validation/is-email? "test@.net")))
+  (is (= false
+         (validation/is-email? "")))
+  (is (= false
+         (validation/is-email? nil))))
+
 (deftest test-greater-than?
   (is (= true
         (validation/greater-than? "2" 1)))
