@@ -5,7 +5,7 @@
 (defn resource-path
   "returns the path to the public folder of the application"
   []
-  (if-let [path (io/resource (str "public" File/separator))]
+  (if-let [path (io/resource "public/")]
     (.getPath path)))
 
 (defn- file-path [path & [filename]]
