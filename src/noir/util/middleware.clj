@@ -80,9 +80,9 @@
           response (handler (if expired? (assoc request :session {}) request))]
       (if expired?
         ;;force the session to be expired
-	      (assoc response :session nil)
-	      ;;update the timestamp to the current time
-	      (assoc response :session (assoc req-session :session-timestamp (Date.)))))))
+	(assoc response :session nil)
+	;;update the timestamp to the current time
+	(assoc response :session (assoc req-session :session-timestamp (Date.)))))))
 
 (defn wrap-access-rules
   "wraps the handler with the supplied access rules.
