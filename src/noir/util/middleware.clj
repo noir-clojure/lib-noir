@@ -10,7 +10,8 @@
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.format :refer [wrap-restful-format]])
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s])
+  (:import java.util.Date))
 
 (defn wrap-if [handler pred wrapper & args]
   (if pred
@@ -72,6 +73,10 @@
   (fn [request]
     (handler (update-in request [:uri] s/replace #"(?<=.)/$" ""))))
 
+(defn- expire? [date expire-ms]
+  (< expire-ms
+     (- (.getTime (Date.)) (.getTime date))))
+
 (defn wrap-session-expiry
   "Allows expiring sessions after a timeout. The timeout is specified in seconds."
   [expire-sec handler]
@@ -80,9 +85,9 @@
           response (handler (if expired? (assoc request :session {}) request))]
       (if expired?
         ;;force the session to be expired
-	(assoc response :session nil)
-	;;update the timestamp to the current time
-	(assoc response :session (assoc req-session :session-timestamp (Date.)))))))
+   	    (assoc response :session nil)
+	      ;;update the timestamp to the current time
+	      (assoc response :session (assoc req-session :session-timestamp (Date.)))))))
 
 (defn wrap-access-rules
   "wraps the handler with the supplied access rules.
