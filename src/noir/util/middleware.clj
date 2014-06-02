@@ -6,7 +6,7 @@
         [hiccup.middleware :only [wrap-base-url]]
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
-        [noir.session :only [mem wrap-noir-session wrap-noir-flash]]
+        [noir.session :only [clear! mem wrap-noir-session wrap-noir-flash]]
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.format :refer [wrap-restful-format]])
@@ -82,7 +82,7 @@
   [expire-sec handler]
   (fn [{{timestamp :session-timestamp :as req-session} :session :as request}]
     (let [expired? (and timestamp (expire? timestamp (* 1000 expire-sec)))
-          response (handler (if expired? (assoc request :session {}) request))]
+          response (handler (if expired? (do (clear!) (assoc request :session {})) request))]
       (if expired?
         ;;force the session to be expired
    	    (assoc response :session nil)
