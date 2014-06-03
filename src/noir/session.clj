@@ -1,3 +1,4 @@
+
 (ns noir.session
   "Stateful session handling functions. Uses a memory-store by
   default, but can use a custom store by supplying a :session-store
@@ -5,7 +6,9 @@
   (:refer-clojure :exclude [get get-in remove swap!])
   (:use ring.middleware.session
         ring.middleware.session.memory
-        ring.middleware.flash))
+        ring.middleware.flash
+        [noir.response :only [redirect]]
+        [ring.middleware.session-timeout :only [wrap-idle-session-timeout]]))
 
 ;; ## Session
 
@@ -104,13 +107,17 @@
             (assoc resp :session (assoc (:session request) :noir @*noir-session*))))))))
 
 (defn wrap-noir-session
-  "A stateful layer around wrap-session. Options are passed to wrap-session."
-  ([handler]
-    (wrap-noir-session handler {}))
-  ([handler opts]
-    (-> handler
-      (noir-session)
-      (wrap-session opts))))
+ "A stateful layer around wrap-session. Options are passed to wrap-session."
+ [handler & [{:keys [timeout timeout-response] :as opts}]]
+ (let [opts (or (dissoc opts :timeout :timeout-response) {})]
+   (if timeout
+     (-> handler
+        (noir-session)
+        (wrap-idle-session-timeout
+         {:timeout timeout
+          :timeout-response timeout-response})
+        (wrap-session opts))
+     (-> handler (noir-session) (wrap-session opts)))))
 
 (defn wrap-noir-session*
   "A stateful layer around wrap-session. Expects that wrap-session has already
