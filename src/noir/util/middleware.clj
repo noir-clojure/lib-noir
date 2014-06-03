@@ -79,15 +79,16 @@
 
 (defn wrap-session-expiry
   "Allows expiring sessions after a timeout. The timeout is specified in seconds."
-  [expire-sec handler]
-  (fn [{{timestamp :session-timestamp :as req-session} :session :as request}]
-    (let [expired? (and timestamp (expire? timestamp (* 1000 expire-sec)))
-          response (handler (if expired? (do (clear!) (assoc request :session {})) request))]
-      (if expired?
-        ;;force the session to be expired
-   	    (assoc response :session nil)
-	      ;;update the timestamp to the current time
-	      (assoc response :session (assoc req-session :session-timestamp (Date.)))))))
+  [handler & [expire-sec]]
+  (let [expire-sec (or expire-sec 600)]
+    (fn [{{timestamp :session-timestamp :as req-session} :session :as request}]
+      (let [expired? (and timestamp (expire? timestamp (* 1000 expire-sec)))
+            response (handler (if expired? (do (clear!) (assoc request :session {})) request))]
+        (if expired?
+          ;;force the session to be expired
+   	      (assoc response :session nil)
+	        ;;update the timestamp to the current time
+	        (assoc response :session (assoc req-session :session-timestamp (Date.))))))))
 
 (defn wrap-access-rules
   "wraps the handler with the supplied access rules.
