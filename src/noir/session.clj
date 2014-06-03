@@ -7,7 +7,6 @@
   (:use ring.middleware.session
         ring.middleware.session.memory
         ring.middleware.flash
-        [noir.response :only [redirect]]
         [ring.middleware.session-timeout :only [wrap-idle-session-timeout]]))
 
 ;; ## Session
