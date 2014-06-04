@@ -34,7 +34,7 @@
              matching-rules (match-rules request rules)
              results (map (partial check-rules request) matching-rules)]
          (if (or (empty? results) (every? #{true} results))
-          (handler request)
+           (handler request)
            (first (remove #{true} results))))))
 
 (defmacro restricted
