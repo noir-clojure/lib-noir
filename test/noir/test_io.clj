@@ -1,5 +1,5 @@
 (ns noir.test-io
-  (:require [clojure.string :refer [replace])
+  (:require [clojure.string :refer [replace]])
   (:use clojure.test noir.io)
   (:import java.net.URL
            java.io.File))
