@@ -27,7 +27,7 @@ and [Compojure](https://github.com/weavejester/compojure).
 
 You want to use [Leiningen](https://github.com/technomancy/leiningen), of course. Add this to your `:dependencies`
 
-!["Leiningen version"](https://clojars.org/lib-noir/latest-version.svg)
+[![Clojars Project](http://clojars.org/lib-noir/latest-version.svg)](http://clojars.org/lib-noir)
 
 ## Breaking changes in 0.7.4
 
