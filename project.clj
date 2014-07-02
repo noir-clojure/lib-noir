@@ -13,6 +13,6 @@
                  [ring-middleware-format "0.3.2"]
                  [ring/ring-session-timeout "0.1.0"]
                  [org.mindrot/jbcrypt "0.3m"]]
-  :plugins [[codox "0.8.9"]
+  :plugins [[codox "0.8.10"]
             [lein-ancient "0.5.5"]]
   :codox {:output-dir "doc"})
