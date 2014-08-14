@@ -2,7 +2,10 @@
   "Simple functions for hashing strings and comparing them. Typically used for storing passwords."
   (:refer-clojure :exclude [compare])
   (:import [org.mindrot.jbcrypt BCrypt]
-           java.security.MessageDigest))
+           java.security.MessageDigest
+           java.security.SecureRandom
+           javax.crypto.SecretKeyFactory
+           [javax.crypto.spec PBEKeySpec SecretKeySpec]))
 
 (defn
   ^{:private true}
@@ -11,7 +14,7 @@
   [instance-type data salt]
   (let [_ (if-not salt
             (.toString data)
-            (let [[s d] (map 
+            (let [[s d] (map
                          (memfn toString)
                          [salt data])]
               (apply str [s d s])))
@@ -27,7 +30,7 @@
   [data & salt]
   (hasher "MD5" data salt))
 
-(defn sha1 
+(defn sha1
   [data & salt]
   (hasher "SHA1" data salt))
 
@@ -40,6 +43,13 @@
    (BCrypt/gensalt size))
   ([]
    (BCrypt/gensalt)))
+
+(defn gen-pbkdf2
+    ; Get a hash for the given string and optional salt
+    ([x salt]
+     (let [k (PBEKeySpec. (.toCharArray x) (.getBytes salt) 1000 192)
+           f (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA1")]
+       (->> (.generateSecret f k) (.getEncoded) (java.math.BigInteger.) (format "%x")))))
 
 (defn encrypt
   "Encrypt the given string with a generated or supplied salt. Uses BCrypt for strong hashing."
@@ -56,6 +66,6 @@
   "Using a signing key, compute the sha1 hmac of v and convert to hex."
   [sign-key v]
   (let [mac (javax.crypto.Mac/getInstance "HmacSHA1")
-        secret (javax.crypto.spec.SecretKeySpec. (.getBytes sign-key), "HmacSHA1")]
+        secret (SecretKeySpec. (.getBytes sign-key), "HmacSHA1")]
     (.init mac secret)
     (apply str (map (partial format "%02x") (.doFinal mac (.getBytes v))))))
