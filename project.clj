@@ -10,7 +10,7 @@
                  [compojure "1.1.8"]
                  [clout "1.2.0"]
                  [hiccup "1.0.5"]
-                 [ring-middleware-format "0.3.2"]
+                 [ring-middleware-format "0.4.0"]
                  [ring/ring-session-timeout "0.1.0"]
                  [org.mindrot/jbcrypt "0.3m"]]
   :plugins [[codox "0.8.10"]
