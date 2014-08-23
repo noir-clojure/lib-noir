@@ -26,7 +26,7 @@
             :access-rules [{:uri "/foo" :rules [allow]}
                            {:uri "/bar" :rules [deny]}
                            {:uri "/baz" :rules [allow deny]}]})))
-                           
+
   (is (= {:status 302, :headers {"Location" "/baz"}, :body ""}
          ((restricted "I shouldn't be here!")
            {:uri "/foo/x"
@@ -51,3 +51,5 @@
          ((restricted "I should be here!")
            {:access-rules [{:redirect "/bar" :rules {:every [allow allow]
                                                      :any [allow deny]}}]}))))
+
+

@@ -60,6 +60,21 @@
      (GET \"/profile\" [] (restricted (show-profile)))
      (GET \"/my-secret-page\" [] (restricted (show-secret-page))))"
   [name & routes]
-  `(compojure.core/defroutes ~name
-     ~@(for [[method# uri# params# & body#] routes]
-         (list method# uri# params# (cons 'noir.util.route/restricted body#)))))
+  (concat
+   ['compojure.core/defroutes name]
+   (clojure.walk/prewalk
+    (fn [item#]
+      (if (and (coll? item#)
+               (symbol? (first item#))
+               (some #{(resolve (first item#))}
+                     [#'compojure.core/GET
+                      #'compojure.core/POST
+                      #'compojure.core/PUT
+                      #'compojure.core/DELETE
+                      #'compojure.core/HEAD
+                      #'compojure.core/OPTIONS
+                      #'compojure.core/PATCH
+                      #'compojure.core/ANY]))
+         (concat (take 3 item#) [(cons 'noir.util.route/restricted (drop 3 item#))])
+         item#))
+    routes)))

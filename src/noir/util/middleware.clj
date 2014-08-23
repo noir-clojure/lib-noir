@@ -160,7 +160,7 @@
   :formats         - optional vector containing formats that should be serialized and
                      deserialized, eg:
 
-                     :formats [:json-kw :edn]
+                     :formats [:json-kw :transit-json :edn]
 
                   available formats:
                   :json - JSON with string keys in :params and :body-params
@@ -169,6 +169,8 @@
                   :yaml-kw - YAML format with keywodized keys in :params and :body-params
                   :edn - Clojure format
                   :yaml-in-html - yaml in a html page (useful for browser debugging)
+                  :transit-json Transit over JSON format
+                  :transit-msgpack Transit over Msgpack format
 
   :access-rules - a vector of access rules you wish to supply,
                   each rule should a function or a rule map as specified in wrap-access-rules, eg:
