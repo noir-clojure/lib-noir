@@ -6,7 +6,7 @@
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [cheshire "5.3.1"]
-                 [ring "1.3.0"]
+                 [ring "1.3.1"]
                  [compojure "1.1.8"]
                  [clout "1.2.0"]
                  [hiccup "1.0.5"]
