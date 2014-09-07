@@ -1,4 +1,3 @@
-
 (ns noir.session
   "Stateful session handling functions. Uses a memory-store by
   default, but can use a custom store by supplying a :session-store
