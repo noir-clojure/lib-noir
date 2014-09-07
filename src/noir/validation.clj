@@ -122,7 +122,7 @@
 (defn clear-errors
   ^{:doc "Original name for clear-errors!. Use that instead."
     :deprecated "0.8.0"}
-  [] (clear-errors))
+  [] (clear-errors!))
 
 (defn rule
   "If the passed? condition is not met, add the error text to the given field:
