@@ -1,5 +1,6 @@
 (ns noir.util.route
   (:use [clout.core :only [route-matches]]
+        [clojure.walk :only [prewalk]]
         [noir.request :only [*request*]]
         [noir.response :only [redirect]]))
 
