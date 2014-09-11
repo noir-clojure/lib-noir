@@ -1,8 +1,9 @@
 (ns noir.util.route
-  (:use [clout.core :only [route-matches]]
-        [clojure.walk :only [prewalk]]
-        [noir.request :only [*request*]]
-        [noir.response :only [redirect]]))
+  (:require
+   [clout.core :refer [route-matches]]
+   [clojure.walk :refer [prewalk]]
+   [noir.request :refer [*request*]]
+   [noir.response :refer [redirect]]))
 
 (defn ^{:skip-wiki true} apply-rules [request rules]
   (if (map? rules)
