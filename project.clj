@@ -1,10 +1,11 @@
-(defproject lib-noir "0.8.9"
+(defproject lib-noir "0.9.0"
   :description "Libraries from Noir for your enjoyment."
   :url "https://github.com/noir-clojure/lib-noir"
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.6.0"]
+                 [ring/ring-defaults "0.1.2"]
                  [cheshire "5.3.1"]
                  [ring "1.3.1"]
                  [compojure "1.1.9"]

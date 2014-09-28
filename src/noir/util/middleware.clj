@@ -2,7 +2,7 @@
   (:use [noir.request :only [*request*]]
         [noir.response :only [redirect]]
         [compojure.core :only [routes]]
-        [compojure.handler :only [api]]
+        [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
         [hiccup.middleware :only [wrap-base-url]]
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
@@ -143,6 +143,14 @@
 (defn- wrap-middleware [routes [wrapper & more]]
   (if wrapper (recur (wrapper routes) more) routes))
 
+(defn- mk-defaults
+  [ring-defaults]
+  (or ring-defaults
+      (-> site-defaults
+          (assoc-in [:security :xss-protection :enable?] false)
+          (assoc-in [:security :anti-forgery] false)
+          (dissoc :session))))
+
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
   - wrap-request-map
@@ -179,13 +187,13 @@
                                  rule2
                                  {:redirect \"/unauthorized1\"
                                   :rules [rule3 rule4]}]"
-  [app-routes & {:keys [session-options store multipart middleware access-rules formats]}]
+  [app-routes & {:keys [session-options store multipart middleware access-rules formats ring-defaults]}]
   (letfn [(wrap-middleware-format [handler]
             (if formats (wrap-restful-format handler :formats formats) handler))]
     (-> (apply routes app-routes)
         (wrap-middleware middleware)
         (wrap-request-map)
-        (api)
+        (wrap-defaults (mk-defaults ring-defaults))
         (wrap-base-url)
         (wrap-middleware-format)
         (with-opts wrap-multipart-params multipart)
