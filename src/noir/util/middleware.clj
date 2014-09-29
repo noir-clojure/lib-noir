@@ -143,18 +143,10 @@
 (defn- wrap-middleware [routes [wrapper & more]]
   (if wrapper (recur (wrapper routes) more) routes))
 
-(defn- mk-defaults
-  [ring-defaults]
-  (or ring-defaults
-      (-> site-defaults
-          (assoc-in [:security :xss-protection :enable?] false)
-          (assoc-in [:security :anti-forgery] false)
-          (dissoc :session))))
-
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
   - wrap-request-map
-  - api
+  - site-defaults
   - wrap-multipart-params
   - wrap-noir-validation
   - wrap-noir-cookies
@@ -165,6 +157,9 @@
   :store           - deprecated: use sesion-options instead!
   :multipart       - an optional map of multipart-params middleware options
   :middleware      - a vector of any custom middleware wrappers you wish to supply
+  :ring-defaults   - pass in optional map for initializing ring-defaults, uses site-defaults if none passed
+                     see https://github.com/ring-clojure/ring-defaults/blob/master/src/ring/middleware/defaults.clj
+                     for more details
   :formats         - optional vector containing formats that should be serialized and
                      deserialized, eg:
 
@@ -193,7 +188,7 @@
     (-> (apply routes app-routes)
         (wrap-middleware middleware)
         (wrap-request-map)
-        (wrap-defaults (mk-defaults ring-defaults))
+        (wrap-defaults (dissoc (or ring-defaults site-defaults) :session))
         (wrap-base-url)
         (wrap-middleware-format)
         (with-opts wrap-multipart-params multipart)
