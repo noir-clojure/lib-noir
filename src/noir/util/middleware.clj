@@ -158,7 +158,7 @@
   :multipart       - an optional map of multipart-params middleware options
   :middleware      - a vector of any custom middleware wrappers you wish to supply
   :ring-defaults   - pass in optional map for initializing ring-defaults, uses site-defaults if none passed
-                     see https://github.com/ring-clojure/ring-defaults/blob/master/src/ring/middleware/defaults.clj
+                     see https://github.com/ring-clojure/ring-defaults
                      for more details
   :formats         - optional vector containing formats that should be serialized and
                      deserialized, eg:
