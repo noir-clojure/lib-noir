@@ -7,7 +7,6 @@
         [noir.validation :only [wrap-noir-validation]]
         [noir.cookies :only [wrap-noir-cookies]]
         [noir.session :only [clear! mem wrap-noir-session wrap-noir-flash]]
-        [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [ring.middleware.session.memory :only [memory-store]]
         [ring.middleware.format :refer [wrap-restful-format]])
   (:require [clojure.string :as s])
@@ -17,11 +16,6 @@
   (if pred
     (apply wrapper handler args)
     handler))
-
-(defn- with-opts [routes middleware opts]
-  (if opts
-    (middleware routes opts)
-    (middleware routes)))
 
 (defn wrap-rewrites
   "Rewrites should be [regex replacement] pairs. The first regex that matches the request's URI will
@@ -153,7 +147,9 @@
   - wrap-noir-flash
   - wrap-noir-session
 
-  :session-options - optional map specifying Ring session parameters, eg: {:cookie-attrs {:max-age 1000}}
+  :base-url        - optional key to set the base URL for Hiccup templates
+  :session-options - deprecated: use :session key in :ring-defaults instead
+                     optional map specifying Ring session parameters, eg: {:cookie-attrs {:max-age 1000}}
   :store           - deprecated: use sesion-options instead!
   :multipart       - an optional map of multipart-params middleware options
   :middleware      - a vector of any custom middleware wrappers you wish to supply
@@ -182,19 +178,20 @@
                                  rule2
                                  {:redirect \"/unauthorized1\"
                                   :rules [rule3 rule4]}]"
-  [app-routes & {:keys [session-options store multipart middleware access-rules formats ring-defaults]}]
+  [app-routes & {:keys [base-url session-options store multipart middleware access-rules formats ring-defaults]}]
   (letfn [(wrap-middleware-format [handler]
             (if formats (wrap-restful-format handler :formats formats) handler))]
     (-> (apply routes app-routes)
         (wrap-middleware middleware)
         (wrap-request-map)
         (wrap-defaults (dissoc (or ring-defaults site-defaults) :session))
-        (wrap-base-url)
+        (wrap-base-url base-url)
         (wrap-middleware-format)
-        (with-opts wrap-multipart-params multipart)
         (wrap-access-rules access-rules)
         (wrap-noir-validation)
         (wrap-noir-cookies)
         (wrap-noir-flash)
         (wrap-noir-session
-         (update-in session-options [:store] #(or % (memory-store mem)))))))
+          (update-in
+            (or session-options (:session ring-defaults) (:session site-defaults))
+            [:store] #(or % (memory-store mem)))))))
