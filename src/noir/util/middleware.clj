@@ -141,7 +141,10 @@
   "workaround for: https://github.com/yogthos/lein-ring/commit/e2c8eae104a08ee41b28fef7cb163d83644dd636"
   [handler]
   (fn [req]
-    (handler (update-in req [:path-info] #(or (not-empty %) "/")))))
+    (handler
+     (if (:servlet-context req)
+       (update-in req [:path-info] #(or (not-empty %) "/"))
+       req))))
 
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
