@@ -137,6 +137,12 @@
 (defn- wrap-middleware [routes [wrapper & more]]
   (if wrapper (recur (wrapper routes) more) routes))
 
+(defn- wrap-minimum-path
+  "workaround for: https://github.com/yogthos/lein-ring/commit/e2c8eae104a08ee41b28fef7cb163d83644dd636"
+  [handler]
+  (fn [req]
+    (handler (update-in req [:path-info] #(or (not-empty %) "/")))))
+
 (defn app-handler
   "creates the handler for the application and wraps it in base middleware:
   - wrap-request-map
@@ -194,4 +200,5 @@
         (wrap-noir-session
           (update-in
             (or session-options (:session ring-defaults) (:session site-defaults))
-            [:store] #(or % (memory-store mem)))))))
+            [:store] #(or % (memory-store mem))))
+        (wrap-minimum-path))))
