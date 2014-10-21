@@ -60,7 +60,9 @@
 (defn compare
   "Compare a raw string with an already encrypted string"
   [raw encrypted]
-  (BCrypt/checkpw raw encrypted))
+  (boolean
+   (if (and raw encrypted)
+    (BCrypt/checkpw raw encrypted))))
 
 (defn sha1-sign-hex
   "Using a signing key, compute the sha1 hmac of v and convert to hex."
