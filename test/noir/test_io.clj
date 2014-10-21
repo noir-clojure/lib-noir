@@ -1,4 +1,5 @@
 (ns noir.test-io
+  (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [replace]])
   (:use clojure.test noir.io)
   (:import java.net.URL
@@ -9,7 +10,7 @@
     (is (= (str File/separator "public" File/separator)
            (-> (resource-path) (replace #"/" File/separator))))))
 
-(deftest test-get-resource 
+(deftest test-get-resource
   (with-redefs [clojure.java.io/resource (fn [path] (new URL  (str "file:///" path)))]
-    (is (= (.replaceAll "/public/css/screen.css" "/" File/separator) 
+    (is (= (.replaceAll "/public/css/screen.css" "/" File/separator)
            (.getPath (get-resource "/css/screen.css"))))))

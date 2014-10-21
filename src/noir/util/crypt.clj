@@ -2,8 +2,7 @@
   "Simple functions for hashing strings and comparing them. Typically used for storing passwords."
   (:refer-clojure :exclude [compare])
   (:require [clojurewerkz.scrypt.core :as sc])
-  (:import org.mindrot.jbcrypt.BCrypt
-           java.security.MessageDigest
+  (:import java.security.MessageDigest
            java.security.SecureRandom
            javax.crypto.SecretKeyFactory
            [javax.crypto.spec PBEKeySpec SecretKeySpec]))
@@ -45,12 +44,6 @@
      (let [k (PBEKeySpec. (.toCharArray x) (.getBytes salt) 1000 192)
            f (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA1")]
        (->> (.generateSecret f k) (.getEncoded) (java.math.BigInteger.) (format "%x")))))
-
-(defn gen-salt
-  ([size]
-   (BCrypt/gensalt size))
-  ([]
-   (BCrypt/gensalt)))
 
 (defn encrypt
   "Encrypts a string value using scrypt.

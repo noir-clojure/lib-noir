@@ -13,7 +13,6 @@
                  [hiccup "1.0.5"]
                  [ring-middleware-format "0.4.0"]
                  [ring/ring-session-timeout "0.1.0"]
-                 [org.mindrot/jbcrypt "0.3m"]
                  [clojurewerkz/scrypt "1.2.0"]]
   :plugins [[codox "0.8.10"]
             [lein-ancient "0.5.5"]]
