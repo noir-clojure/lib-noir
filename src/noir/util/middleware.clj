@@ -163,9 +163,9 @@
 
                   available formats:
                   :json - JSON with string keys in :params and :body-params
-                  :json-kw - JSON with keywodized keys in :params and :body-params
+                  :json-kw - JSON with keywordized keys in :params and :body-params
                   :yaml - YAML format
-                  :yaml-kw - YAML format with keywodized keys in :params and :body-params
+                  :yaml-kw - YAML format with keywordized keys in :params and :body-params
                   :edn - Clojure format
                   :yaml-in-html - yaml in a html page (useful for browser debugging)
                   :transit-json Transit over JSON format
