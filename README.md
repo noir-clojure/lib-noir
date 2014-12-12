@@ -12,7 +12,7 @@ Some of the core features includes the following:
 * input validation
 * content caching
 * route filtering and redirection
-* password hashing using [jBcrypt](http://www.mindrot.org/projects/jBCrypt/)
+* password hashing using [SCrypt](https://github.com/clojurewerkz/scrypt)
 
 See the [API](http://yogthos.github.com/lib-noir/index.html) for more details.
 
