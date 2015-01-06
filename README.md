@@ -29,6 +29,10 @@ You want to use [Leiningen](https://github.com/technomancy/leiningen), of course
 
 [![Clojars Project](http://clojars.org/lib-noir/latest-version.svg)](http://clojars.org/lib-noir)
 
+## Breaking changes in 0.9.5
+
+lib-noir now uses [scrypt](https://github.com/clojurewerkz/scrypt) as its crypto implementation. This breaks compatibility with the existing password hashes encrypted using bcrypt.
+
 ## Breaking changes in 0.7.4
 
 The `:store` key in `noir.util.middleware/app-handler` has been replaced with the `:session-options` key that allows specifying any Ring session parameters, eg:
