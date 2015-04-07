@@ -19,10 +19,17 @@
   (is (= "baz" (cache! :foo "baz"))))
 
 (deftest set-size!-test
+  ;; Several items are accessed 2 times during these tests.  They
+  ;; should deterministically win over any items accessed only 1 time
+  ;; when the size is exceeded.  If all are only accessed once, then
+  ;; the items kept depend upon the order that Clojure's seq returns
+  ;; from a map, which is unspecified, and can change across Clojure
+  ;; versions.
   (clear!)
   (set-size! 2)
   (cache! :foo "foo")
   (cache! :bar "bar")
+  (cache! :foo "foo")
   (cache! :baz "baz")
   (is (= #{:foo :baz} (->> @cached :items keys set)))
 
@@ -36,8 +43,12 @@
   (clear!)
   (set-size! 5)
   (cache! :first "first")
+  (cache! :first "first")
+  (cache! :second "second")
   (cache! :second "second")
   (cache! :third "third")
+  (cache! :third "third")
+  (cache! :fourth "fourth")
   (cache! :fourth "fourth")
   (cache! :fifth "fifth")
   (cache! :sixth "sixth")
