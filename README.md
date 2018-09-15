@@ -1,5 +1,7 @@
 # `lib-noir`
 
+## this project is deprecated and it's no longer actively maintained 
+
 A set of utilities and helpers for building ring apps.
 
 [![Continuous Integration status](https://api.travis-ci.org/noir-clojure/lib-noir.png)](http://travis-ci.org/noir-clojure/lib-noir)
